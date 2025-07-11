@@ -1,0 +1,27 @@
+# Ignorar ambiente virtual na raiz
+venv/
+
+# Ignorar arquivos gerados pelo Python/Django (API)
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+backend/*/migrations/
+backend/db.sqlite3
+
+# Ignorar arquivos de configuração sensíveis
+*.env
+*.local
+*.ini
+*.log
+
+# Ignorar IDEs e editores
+.idea/
+.vscode/
+
+# Ignorar arquivos gerados pelo sistema
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
