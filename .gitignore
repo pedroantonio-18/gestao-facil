@@ -1,0 +1,32 @@
+# Ignorar ambiente virtual na raiz
+venv/
+
+# Ignorar arquivos gerados pelo Python/Django
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+**/migrations/*
+
+# Não ignorar os __init__.py
+!__init__.py
+
+# Ignorar banco de dados local (caso use SQLite)
+backend/db.sqlite3
+
+# Ignorar arquivos de configuração sensíveis
+*.env
+*.local
+*.ini
+*.log
+
+# Ignorar IDEs e editores
+.idea/
+.vscode/
+
+# Ignorar arquivos gerados pelo sistema
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
