@@ -20,6 +20,10 @@ class Contrato(models.Model):
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='ativo')
 
+    @property
+    def __str__(self):
+        return f'Contrato {self.numero_contrato} - {self.entidade}'
+
 class Vigencia(models.Model):
     # Vigências
     vigencia_original = models.DateField(blank=True, null=True, verbose_name='Vigência Original')
@@ -40,6 +44,17 @@ class Vigencia(models.Model):
         if self.vigencia_atual:
             return self.vigencia_atual - date.today() <= timedelta(days=180)
         return False
+
+    # Retorna todos os contratos que estão no período de próximo ao vencimento
+    @classmethod
+    def contratos_proximos_do_vencimento(cls):
+        hoje = date.today()
+        queryset = cls.objects.select_related('contrato').prefetch_related(
+                'contrato__contato_set__email_contato_set',
+                'contrato__gestor_set'
+            )
+
+        return [v for v in queryset if v.proximo_ao_vencimento and v.contrato.status == 'ativo']
 
     # Verifica se o contrato não pode mais ser renovado (atingiu 5 anos de vigência)
     @property
@@ -91,6 +106,13 @@ class Garantia(models.Model):
     # Dados da garantia
     tipo_garantia = models.CharField(blank=True, null=True, verbose_name='Tipo de Garantia')
     valor_garantia = models.DecimalField(blank=True, null=True, max_digits=11, decimal_places=2, verbose_name='Valor da Garantia')
+
+    # Relações (chaves estrangeiras)
+    contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
+
+class Notificacao_Enviada(models.Model):
+    # Dados de uma notificação sobre um contrato
+    data_envio = models.DateField(verbose_name='Data de Envio da Notificação')
 
     # Relações (chaves estrangeiras)
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
