@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from contratos.services.servico_email import enviar_alerta_email
-from contratos.models import Contrato, Vigencia
+from contratos.services.servico_teams import enviar_alerta_teams
+from contratos.models import Contrato, Vigencia, Contato
 from datetime import date
 
 class Command(BaseCommand):
@@ -10,12 +11,14 @@ class Command(BaseCommand):
         vigencias = Vigencia.contratos_proximos_do_vencimento()
         vigencia = vigencias[0]
         contrato = vigencia.contrato
+        contato = contrato.contato_set.first()
 
         dias_restantes = (vigencia.vigencia_atual - date.today()).days
 
-        # Coloque seu próprio email de teste abaixo:
         destinatarios = ['pedro.antonio2@discente.ufg.br']
 
         enviar_alerta_email(contrato, vigencia, dias_restantes, destinatarios)
+        enviar_alerta_teams(contrato, vigencia, dias_restantes, contato)
 
-        self.stdout.write(self.style.SUCCESS('Teste de email enviado!'))
+        self.stdout.write(self.style.SUCCESS('Teste de email enviado'))
+        self.stdout.write(self.style.SUCCESS('Teste de mensagem no Teams enviado'))

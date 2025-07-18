@@ -3,8 +3,8 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 def enviar_alerta_email(contrato, vigencia, dias_restantes, destinatarios):
-    if dias_restantes >= 0:
-        assunto = f'[TRF1] Alerta: {contrato.__str__} vence em {dias_restantes} dias'
+    if dias_restantes > 0:
+        assunto = f'[TRF1] Alertav: {contrato.__str__} vence em {dias_restantes} dias'
     else:
         assunto = f'[TRF1] Alerta: {contrato.__str__} venceu!'
 
