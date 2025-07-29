@@ -6,7 +6,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+# DEBUG = config('DEBUG', default=False, cast=bool)
+
+# Garanta que DEBUG está True (verifique no seu .env)
+DEBUG = True
+
+# Adicione hosts locais
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 ALLOWED_HOSTS = []
 
@@ -25,6 +31,8 @@ INSTALLED_APPS = [
     'insumos',
     'penalidades',
     'pagamentos',
+    'pages.apps.PagesConfig',
+    'django_browser_reload',
 ]
 
 MIDDLEWARE = [
@@ -35,6 +43,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -102,7 +111,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -118,3 +126,13 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Informações para envio de mensagens no Teams
 TEAMS_WEBHOOK = config('TEAMS_WEBHOOK')
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Adicione para produção
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Adicione também para media files se necessário
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

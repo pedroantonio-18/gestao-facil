@@ -1,0 +1,74 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'pages/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'pages/reset.css' %}" />
+    <title>Licita Facil</title>
+  </head>
+  <body>
+    <header>
+      <nav class="navigation">
+        <img
+          class="logo_JF"
+          src="{% static 'img/JF_logo.png' %}"
+          alt="Logo da Justiça federal"
+        />
+
+        <div>
+          <ul class="services-list">
+            <li>Contratos</li>
+            <li>|</li>
+            <li>Atualizar Contratos</li>
+            <li>|</li>
+            <li>Notificaçôes</li>
+          </ul>
+        </div>
+
+        <div class="utils">
+          <label class="switch">
+            <input type="checkbox" />
+            <span class="slider"></span>
+          </label>
+
+          <button class="btn-login">USER</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="content">
+      <div class="contracts">
+        <input class="search-contract" type="text" placeholder="Informe o número ou nome do contrato"></input>
+
+        <div class="upload-container">
+          <form action="/upload" method="post" enctype="multipart/form-data">
+          <label for="arquivo" class="upload-label">REGISTRE SEU CONTRATO</label>
+          <input type="file" id="arquivo" name="arquivo">
+          </form>
+        </div>
+      </div>
+
+      <div>
+        <h1 class="register-title">Registro de contratos recem atualizados</h1>
+      </div>
+
+      <div class="footer">
+        <div class="localizacao">
+            <h2>Rua 19, nº 244, Centro</h2>
+            <ul class="info">
+              <li class="info-item"><strong>CEP:</strong> 74030-090 Goiânia/GO</li>
+              <li class="info-item"><strong>Telefone:</strong> (62) 3226-1500</li>
+              <li class="info-item"><strong>CNPJ:</strong> 05.439.950/0001-30</li>
+            </ul>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer-info">
+      <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
+    </footer>
+  </body>
+</html>

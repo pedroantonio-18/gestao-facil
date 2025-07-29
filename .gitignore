@@ -30,3 +30,6 @@ backend/db.sqlite3
 *.swo
 *.sublime-project
 *.sublime-workspace
+
+#ingnora o arquiv .env
+*.env
