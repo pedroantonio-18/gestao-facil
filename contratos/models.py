@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 from datetime import date, timedelta
 
 class Contrato(models.Model):
@@ -68,6 +69,7 @@ class Vigencia(models.Model):
 class Contato(models.Model):
     # Dados do contato
     nome = models.CharField(blank=True, null=True, max_length=100, verbose_name='Nome')
+    receber_emails = models.BooleanField(verbose_name='Deseja receber e-mails?', default=True)
 
     # Relações (chaves estrangeiras)
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
@@ -90,6 +92,7 @@ class Gestor(models.Model):
     # Dados do gestor
     nome = models.CharField(blank=True, null=True, max_length=50, verbose_name='Nome do Órgão Gestor')
     email = models.EmailField(blank=True, null=True, verbose_name='Email do Gestor')
+    receber_emails = models.BooleanField(verbose_name='Deseja receber e-mails?', default=True)
 
     # Relações (chaves estrangeiras)
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
@@ -110,9 +113,53 @@ class Garantia(models.Model):
     # Relações (chaves estrangeiras)
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
 
-class Notificacao_Enviada(models.Model):
-    # Dados de uma notificação sobre um contrato
-    data_envio = models.DateField(verbose_name='Data de Envio da Notificação')
+class Notificacao(models.Model):
+    # Dados da notificação
+    data_envio = models.DateField(verbose_name='Data de Envio da Notificação', blank=True, null=True)
+    enviado_teams = models.BooleanField(verbose_name='Foi enviado ao Teams', default=False)
 
     # Relações (chaves estrangeiras)
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'Notificação - Contrato {self.contrato.numero_contrato} em {self.data_envio}'
+
+class TokenGestorNotificacao(models.Model):
+    # Dados do token
+    token = models.UUIDField(default=uuid.uuid4, unique=True)
+    expira_em = models.DateField()
+    validado = models.BooleanField(default=False)
+
+    # Relações (chaves estrangeiras)
+    notificacao = models.ForeignKey(Notificacao, on_delete=models.CASCADE)
+    gestor = models.ForeignKey(Gestor, on_delete=models.CASCADE)
+
+    @property
+    def expirado(self):
+        return self.expira_em < date.today()
+
+    def renovar(self):
+        self.token = uuid.uuid4()
+        self.expira_em = self.expira_em + timedelta(days=7)
+        self.validado = False
+        self.save()
+
+class TokenContatoNotificacao(models.Model):
+    # Dados do token
+    token = models.UUIDField(default=uuid.uuid4, unique=True)
+    expira_em = models.DateField()
+    validado = models.BooleanField(default=False)
+
+    # Relações (chaves estrangeiras)
+    notificacao = models.ForeignKey(Notificacao, on_delete=models.CASCADE)
+    contato = models.ForeignKey(Contato, on_delete=models.CASCADE)
+
+    @property
+    def expirado(self):
+        return self.expira_em < date.today()
+
+    def renovar(self):
+        self.token = uuid.uuid4()
+        self.expira_em = self.expira_em + timedelta(days=7)
+        self.validado = False
+        self.save()

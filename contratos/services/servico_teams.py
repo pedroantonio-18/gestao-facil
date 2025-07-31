@@ -1,8 +1,7 @@
 from django.conf import settings
 from requests import post
-from datetime import datetime
 
-def enviar_alerta_teams(contrato, vigencia, dias_restantes, contato):
+def enviar_alerta_teams(contrato, vigencia, dias_restantes, contato, gestor):
     if dias_restantes > 0:
         title = f'⚠️ Alerta - Vencimento Próximo: {contrato.__str__} vence em {dias_restantes} dias'
     else:
@@ -14,9 +13,10 @@ def enviar_alerta_teams(contrato, vigencia, dias_restantes, contato):
         'title': title,
         'contract_number': contrato.numero_contrato,
         'entity': contrato.entidade,
+        'object': contrato.objeto,
         'expire_date': vigencia_atual.strftime('%d/%m/%Y'),
         'remaining_days': f'{dias_restantes} dias',
-        'responsible': contato.nome, 
+        'responsible': f'{gestor.nome} - {contato.nome}',
     }
 
     try:

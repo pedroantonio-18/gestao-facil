@@ -24,13 +24,15 @@
     }
 
     h1 {
-      font-size: 20px;
+      font-size: 22px;
       color: #1a1a1a;
+      margin-bottom: 20px;
     }
 
     p {
       margin: 10px 0;
       font-size: 15px;
+      line-height: 1.5;
     }
 
     .footer {
@@ -38,16 +40,41 @@
       font-size: 12px;
       color: #777777;
     }
+
+    .botao-email {
+      display: inline-block;
+      background-color: #1c52b8;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 30px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .botao-email:hover {
+      background-color: #1744a0;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>⚠️ Alerta de Vencimento de Contrato</h1>
     <p><strong>Número do Contrato:</strong> {{ contrato.numero_contrato }}</p>
-    <p><strong>Entidade:</strong> {{ contrato.entidade }}</p>
+    <p><strong>Contratada:</strong> {{ contrato.entidade }}</p>
+    <p><strong>Objeto:</strong> {{ contrato.objeto }}</p>
     <p><strong>Vencimento em:</strong> {{ vigencia.vigencia_atual|date:"d/m/Y" }}</p>
     <p><strong>Dias restantes:</strong> {{ dias_restantes }} dias</p>
     <p>Este contrato está se aproximando da data de vencimento.</p>
+
+    <div style="text-align: center;">
+      <a href="{{ url_validacao }}" class="botao-email">
+        Parar de Receber Este Email
+      </a>
+    </div>
   </div>
 
   <div class="footer">
