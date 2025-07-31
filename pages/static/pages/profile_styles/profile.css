@@ -1,0 +1,278 @@
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  background-color: aliceblue;
+  width: 100vw;
+  position: fixed;
+  border-bottom: 1px solid #00589b30;
+}
+
+.logo_JF {
+  margin: 0px 40px;
+  width: 218px;
+}
+
+.services-list {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  gap: 50px;
+  color: #00579b;
+  font-size: 15px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.services-item a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+.services-item:hover {
+  background-color: #00579b;
+  color: white;
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.utils {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 0px 40px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 70px;
+  height: 40px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #c7c7c7;
+  transition: 0.4s;
+  border-radius: 40px;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 30px;
+  width: 30px;
+  left: 5px;
+  bottom: 5px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #00579b;
+}
+
+input:checked + .slider::before {
+  transform: translateX(30px);
+}
+
+.profile-title {
+  color: #f7f7f7;
+  font-family: "Roboto", sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #00579b;
+  height: 100px;
+  margin-top: 80px;
+}
+
+.profile-title h1,
+.profile-title a {
+  margin: 20px 40px;
+}
+
+.go-home {
+  font-family: "Roboto", sans-serif;
+  border-radius: 10px;
+  border: none;
+  background-color: #f7f7f7;
+  color: #00579b;
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #f7f7f7;
+  height: 100%;
+}
+
+.personal-info {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.divisor {
+  background-color: #00589b30;
+  height: 425px;
+  width: 1px;
+}
+
+.account {
+  display: flex;
+}
+
+.registers {
+  margin: 50px;
+}
+
+.registers spam {
+  padding: 6px 2px;
+  font-family: "Roboto", sans-serif;
+  color: #00579b;
+  font-size: 20px;
+}
+
+.register-bar {
+  padding: 20px 300px 20px 20px;
+  background-color: aliceblue;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px #00000020;
+  font-family: "Roboto", sans-serif;
+}
+
+.photo {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background-color: #00579b;
+}
+
+.account {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-profile {
+  display: flex;
+  flex-direction: column;
+  font-family: "Roboto", sans-serif;
+  margin: 40px;
+  color: #00579b;
+}
+
+.account-profile h2 {
+  margin-bottom: 30px;
+}
+
+.btn-edit {
+  font-family: "Roboto", sans-serif;
+  border-radius: 10px;
+  border: none;
+  background-color: #00579b;
+  color: #f7f7f7;
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn-logout {
+  font-family: "Roboto", sans-serif;
+  border-radius: 10px;
+  border: none;
+  background-color: #bc0000;
+  color: #f7f7f7;
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.photo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo img {
+  width: 180px;
+  padding-bottom: 10px;
+}
+
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: #004a88;
+  height: 160px;
+}
+
+.localizacao {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  color: #f7f7f7;
+  margin: 20px 40px;
+}
+
+.info {
+  color: #c7c7c7;
+  font-size: 15px;
+}
+
+.info-item {
+  margin: 10px 0px;
+}
+
+.line {
+  width: 2px;
+  height: 120px;
+  background-color: #f7f7f7;
+  margin: 0px 40px;
+}
+
+.logo_footer {
+  width: 240px;
+  margin: 0px 40px;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #262626;
+  height: 80px;
+}
+
+.footer-info p {
+  color: #f7f7f7;
+  font-family: "Roboto", sans-serif;
+}
