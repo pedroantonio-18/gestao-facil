@@ -1,0 +1,94 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'pages/global.css' %}" />
+    <link rel="stylesheet" href="{% static 'pages/home_styles\home.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Licita Facil</title>
+  </head>
+  <body>
+    <header>
+      <nav class="navigation">
+        <img
+          class="logo_JF"
+          src="{% static 'img/JF_logo.png' %}"
+          alt="Logo da Justiça federal"
+        />
+
+        <div>
+          <ul class="services-list">
+            <li class="services-item">Contratos</li>
+            <spam >|</spam>
+            <li class="services-item">
+              <a href="{% url 'update_contracts' %}">Atualizar Contratos</a>
+            </li>
+            <spam>|</spam>
+            <li class="services-item">Notificaçôes</li>
+          </ul>
+        </div>
+
+        <div class="utils">
+          <label class="switch">
+            <input type="checkbox" />
+            <spam class="slider"></spam>
+          </label>
+
+          <a class="btn-user" href="{% url 'profile' %}">USER</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="content">
+      <div class="contracts">
+        <input class="search-contract" type="text" name="search" placeholder="Informe o número ou nome do contrato"></input>
+        <button class="search-btn"><i class="fas fa-search"></i></button>
+
+        <div class="upload-container">
+          <form action="/upload" method="post" enctype="multipart/form-data">
+          <label for="arquivo" class="upload-label">REGISTRE SEU CONTRATO</label>
+          <input type="file" id="arquivo" name="arquivo">
+          </form>
+        </div>
+      </div>
+
+      <div class="contracts-update">
+        <h1 class="register-title">Registro de contratos recem atualizados</h1>
+
+        <div class="historical-contracts"></div>
+      </div>
+
+      <div class="footer">
+
+        <div class="localizacao">
+            <h2>Rua 19, nº 244, Centro</h2>
+
+            <ul class="info">
+              <li class="info-item"><strong>CEP:</strong> 74030-090 Goiânia/GO</li>
+              <li class="info-item"><strong>Telefone:</strong> (62) 3226-1500</li>
+              <li class="info-item"><strong>CNPJ:</strong> 05.439.950/0001-30</li>
+            </ul>
+        </div>
+
+        <div class="line"></div>
+
+        <iframe src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d244622.50368607216!2d-49.53920458466345!3d-16.665539375156392!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x935ef17cabdf4161%3A0xc5a966b9b525c720!2sJusti%C3%A7a%20Federal%20-%20R.%2019%2C%20244%20-%20St.%20Central%2C%20Goi%C3%A2nia%20-%20GO%2C%2074030-090!3m2!1d-16.6779242!2d-49.253507199999994!5e0!3m2!1spt-PT!2sbr!4v1753813672968!5m2!1spt-PT!2sbr" width="440" height="124" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+        <div class="line"></div>
+
+        <img
+          class="logo_footer"
+          src="{% static 'img/JF_logo.png' %}"
+          alt="Logo da Justiça federal"
+        />
+      </div>
+    </main>
+
+    <footer class="footer-info">
+      <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
+    </footer>
+  </body>
+</html>
