@@ -6,14 +6,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
 
-# DEBUG = config('DEBUG', default=False, cast=bool)
-
-# Garanta que DEBUG está True (verifique no seu .env)
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Adicione hosts locais
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
+# A lista abaixo sobrescreve a anterior. Se quiser permitir hosts, adicione-os aqui.
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
@@ -43,7 +41,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-     'django_browser_reload.middleware.BrowserReloadMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -111,11 +109,25 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = '/staticfiles/'
 
+# =================================================================================
+# Configuração de Arquivos Estáticos (Static Files) - CORRIGIDA
+# =================================================================================
+
+STATIC_URL = '/static/'
+
+# A pasta 'staticfiles' na raiz do seu projeto será a ORIGEM de arquivos estáticos.
 STATICFILES_DIRS = [
     BASE_DIR / "staticfiles",
 ]
+
+# A pasta 'static_collected' será o DESTINO final onde os arquivos serão coletados.
+# É crucial que esta pasta seja diferente de 'STATICFILES_DIRS'.
+STATIC_ROOT = BASE_DIR / 'static_collected'
+
+
+# =================================================================================
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -131,12 +143,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Informações para envio de mensagens no Teams
 TEAMS_WEBHOOK = config('TEAMS_WEBHOOK')
-
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Adicione para produção
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
 
 # Adicione também para media files se necessário
 MEDIA_URL = '/media/'
