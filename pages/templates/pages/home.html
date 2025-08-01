@@ -21,13 +21,27 @@
 
         <div>
           <ul class="services-list">
-            <li class="services-item">Contratos</li>
+            <li class="services-item">
+              <a href="{% url 'contracts' %}">Contratos</a>
+            </li>
             <spam >|</spam>
             <li class="services-item">
               <a href="{% url 'update_contracts' %}">Atualizar Contratos</a>
             </li>
             <spam>|</spam>
-            <li class="services-item">Notificaçôes</li>
+            <li class="services-item" id="notificationBtn">Notificaçôes</li>
+            <div id="notificationModal" class="modal hidden">
+              <div class="modal-content">
+                <h2>Notificações</h2>
+                <ul class="notification-list">
+                  <li>Contrato 245 atualizado com sucesso.</li>
+                  <li>Contrato 103 está prestes a vencer.</li>
+                  <li>Nova mensagem do setor jurídico.</li>
+                </ul>
+                <a href="#" class="see-all">Ver todas as notificações</a>
+                <button class="close-modal">&times;</button>
+              </div>
+            </div>
           </ul>
         </div>
 
@@ -86,9 +100,10 @@
         />
       </div>
     </main>
-
-    <footer class="footer-info">
-      <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
-    </footer>
+    
+    <script src="{% static 'js/scripts.js' %}"></script>
   </body>
+  <footer class="footer-info">
+    <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
+  </footer>
 </html>

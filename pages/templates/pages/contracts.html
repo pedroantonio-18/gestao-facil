@@ -1,14 +1,20 @@
 {%load static%}
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="{% static 'pages/global.css' %}" />
-    <link rel="stylesheet" href="{% static 'pages\updateContracts-styles\updateContracts-styles.css' %}"/>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>Atualizar Contratos</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'pages\global.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'pages\display of contracts\contracts.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <title>Licita Facil</title>
   </head>
   <body>
     <header>
@@ -21,11 +27,11 @@
 
         <div>
           <ul class="services-list">
-            <li class="services-item">
-              <a href="{% url 'contracts' %}">Contratos</a>
-            </li>
+            <li class="services-item">Contratos</li>
             <spam>|</spam>
-            <li class="services-item active">Atualizar Contratos</li>
+            <li class="services-item">
+              <a href="{% url 'update_contracts' %}">Atualizar Contratos</a>
+            </li>
             <spam>|</spam>
             <li class="services-item">Notificaçôes</li>
           </ul>
@@ -34,7 +40,7 @@
         <div class="utils">
           <label class="switch">
             <input type="checkbox" />
-            <span class="slider"></span>
+            <spam class="slider"></spam>
           </label>
 
           <a class="btn-user" href="{% url 'profile' %}">USER</a>
@@ -44,24 +50,13 @@
 
     <main class="content">
       <div class="profile-title">
-        <h1>Atualizar contratos</h1>
+        <h1>Visualizar contratos</h1>
         <a class="go-home" href="{% url 'home' %}">Voltar para a Home</a>
       </div>
 
-      <section class="container-list">
-        <div class="edit-contracts">
-          <div class="contract-container">
-            <h1>Contrato n°0000</h1>
-          </div>
-        </div>
+      <div class="container-contract">
 
-        <div class="contracts-list">
-          <div class="field-search">
-            <input class="search-contract" type="text" name="search" placeholder="Informe o número ou nome do contrato"></input>
-            <button class="search-btn"><i class="fas fa-search"></i></button>
-          </div>
-        </div>
-      </section>
+      </div>
 
       <div class="footer">
         <div class="localizacao">
@@ -97,6 +92,7 @@
         />
       </div>
     </main>
+
     <footer class="footer-info">
       <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
     </footer>

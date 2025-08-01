@@ -6,5 +6,8 @@ def home(request):
 def profile(request):
     return render(request, "pages/profile.html")
 
-def updateContracts(request):  # <- NOVA função, antes você tinha "profile" duplicado
+def updateContracts(request):
     return render(request, "pages/updateContracts.html")
+
+def contracts(request):
+    return render(request, "pages/contracts.html")
