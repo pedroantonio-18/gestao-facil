@@ -76,7 +76,7 @@ class Contato(models.Model):
 
 class Telefone_Contato(models.Model):
     # Telefone do Contato
-    telefone = models.CharField(blank=True, null=True, verbose_name='Telefone')
+    telefone = models.CharField(max_length=20, blank=True, null=True, verbose_name='Telefone')
 
     # Relações (chaves estrangeiras)
     contato = models.ForeignKey(Contato, on_delete=models.CASCADE)
@@ -107,7 +107,7 @@ class Links(models.Model):
 
 class Garantia(models.Model):
     # Dados da garantia
-    tipo_garantia = models.CharField(blank=True, null=True, verbose_name='Tipo de Garantia')
+    tipo_garantia = models.CharField(max_length=50, blank=True, null=True, verbose_name='Tipo de Garantia')
     valor_garantia = models.DecimalField(blank=True, null=True, max_digits=11, decimal_places=2, verbose_name='Valor da Garantia')
 
     # Relações (chaves estrangeiras)

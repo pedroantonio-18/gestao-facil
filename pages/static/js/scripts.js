@@ -1,5 +1,3 @@
-import { setupNotificationModal } from './modal.js';
+import { openModal } from './modal.js'
 
-document.addEventListener('DOMContentLoaded', () => {
-  setupNotificationModal();
-});
+openModal();

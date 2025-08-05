@@ -39,23 +39,56 @@
   border-radius: 15px;
   padding: 10px;
 }
-.services-item:hover,
-.services-item.active {
-  background-color: #00579b;
-  color: white;
-  border-radius: 15px;
-  padding: 10px;
+
+.modal-container {
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  background-color: aliceblue;
+  position: absolute;
+  left: 950px;
+  height: 300px;
+  width: 300px;
+  top: 10px;
+  box-shadow: 0px 0px 10px #1b1b1b40;
+  border-radius: 10px;
+  font-family: "Roboto", sans-serif;
+  color: #00579b;
+  display: none;
 }
 
-.utils {
+.notifications {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  margin: 0px 40px;
+  font-family: "Roboto", sans-serif;
+  color: #262626;
+  font-size: 15px;
+  margin: 25px;
 }
 
-.btn-user {
+.notifications li {
+  margin: 0px 0px 25px 0px;
+}
+
+.notifications li:hover {
+  color: #00579b;
+  font-size: 25px;
+}
+
+.modal-itens {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #1b1b1b40;
+}
+
+.modal-container h3 {
+  margin: 20px;
+}
+
+.close-modal {
   font-family: "Roboto", sans-serif;
   cursor: pointer;
   border: none;
@@ -66,6 +99,17 @@
   font-size: 15px;
 }
 
+.close-modal:hover {
+  box-shadow: 0px 0px 3px #262626;
+}
+
+.utils {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 0px 40px;
+}
 
 .switch {
   position: relative;
@@ -123,8 +167,8 @@ input:checked + .slider::before {
   margin-top: 80px;
 }
 
-.profile-title h1, .profile-title
-a {
+.profile-title h1,
+.profile-title a {
   margin: 20px 40px;
 }
 
@@ -147,78 +191,100 @@ a {
   height: 100%;
 }
 
-.container-list {
+.personal-info {
   display: flex;
+  justify-content: space-around;
   align-items: center;
-  justify-content: space-between;
-  margin: 40px 40px;
+  width: 100%;
 }
 
-.edit-contracts {
-  width: 1000px;
-  height: 600px;
-  background-color: aliceblue;
-  border: 1px solid #00589b30;
-  border-radius: 10px;
+.divisor {
+  background-color: #00589b30;
+  height: 425px;
+  width: 1px;
 }
 
-.contract-container{
+.account {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 15px;
-  font-family: 'Roboto', sans-serif;
-  color: #262626;
 }
 
-.contracts-list {
-  width: 400px;
-  height: 600px;
-  background-color: aliceblue;
-  border: 1px solid #00589b30;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: start;
+.registers {
+  margin: 50px;
 }
 
-.field-search{
-  margin: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-}
-
-.search-contract {
-  border-radius: 10px;
-  border: 1px solid #004a88;
+.registers spam {
+  padding: 6px 2px;
   font-family: "Roboto", sans-serif;
-  padding: 20px 10px;
   color: #00579b;
-  font-size: 15px;
-  width: 300px;
-
+  font-size: 20px;
 }
 
-.search-btn {
-  background-color: #f7f7f7;
-  padding: 18px;
-  cursor: pointer;
-  font-size: 18px;
-  color: #00579b;
+.register-bar {
+  padding: 20px 300px 20px 20px;
+  background-color: aliceblue;
+  margin-bottom: 30px;
   border-radius: 10px;
-  border: 1px solid #00579b;
+  box-shadow: 0px 0px 5px #00000020;
+  font-family: "Roboto", sans-serif;
 }
 
-.search-btn:hover{
+.photo {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background-color: #00579b;
+}
+
+.account {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-profile {
+  display: flex;
+  flex-direction: column;
+  font-family: "Roboto", sans-serif;
+  margin: 40px;
+  color: #00579b;
+}
+
+.account-profile h2 {
+  margin-bottom: 30px;
+}
+
+.btn-edit {
+  font-family: "Roboto", sans-serif;
+  border-radius: 10px;
+  border: none;
   background-color: #00579b;
   color: #f7f7f7;
-
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
 }
 
-.search-contract::placeholder {
-  font-size: 16px;
+.btn-logout {
+  font-family: "Roboto", sans-serif;
+  border-radius: 10px;
+  border: none;
+  background-color: #bc0000;
+  color: #f7f7f7;
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.photo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo img {
+  width: 180px;
+  padding-bottom: 10px;
 }
 
 .footer {
@@ -257,8 +323,8 @@ a {
 }
 
 .logo_footer {
-  width: 240px;
-  margin: 0px 40px;
+  width: 150px;
+  margin: 0px 100px 0px 40px;
 }
 
 .footer-info {

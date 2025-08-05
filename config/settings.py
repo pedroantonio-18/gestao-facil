@@ -49,7 +49,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,7 +118,7 @@ STATIC_URL = '/static/'
 
 # A pasta 'staticfiles' na raiz do seu projeto será a ORIGEM de arquivos estáticos.
 STATICFILES_DIRS = [
-    BASE_DIR / "staticfiles",
+   BASE_DIR / "pages" / "static",
 ]
 
 # A pasta 'static_collected' será o DESTINO final onde os arquivos serão coletados.
