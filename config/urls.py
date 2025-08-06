@@ -26,11 +26,8 @@ urlpatterns = [
     path('contratos', include('contratos.urls')),
     
     path('', home, name='home'),
-    
     path('perfil/', profile, name='profile'),
-    
     path('atualizar-contratos/', updateContracts, name='update_contracts'),
-    
     path('contracts/', contracts, name='contracts'),
     
     path("reload/", include("django_browser_reload.urls")),

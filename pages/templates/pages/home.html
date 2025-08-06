@@ -72,7 +72,19 @@
       <div class="contracts-update">
         <h1 class="register-title">Registro de contratos recem atualizados</h1>
 
-        <div class="historical-contracts"></div>
+        <div class="historical-contracts">
+
+          {% for contrato in contratos_recentes %}
+            <div class="contract-item">
+              <h3 class='width'>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h3>
+              <p class='width'><strong>Objeto:</strong> {{ contrato.objeto }}</p>
+              <p class='width end'><strong>Vigência Atual:</strong> {{ contrato.ultima_vigencia }}</p>
+            </div>
+          {% empty %}
+            <p>Nenhum contrato recente disponível.</p>
+          {% endfor %}
+
+        </div>
       </div>
 
       <div class="footer">

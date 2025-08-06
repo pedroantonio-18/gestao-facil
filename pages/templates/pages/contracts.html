@@ -5,12 +5,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static 'css\global.css' %}" />
-    <link rel="stylesheet" href="{% static 'css\contracts.css' %}" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="{% static 'css/global.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/contracts.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Licita Facil</title>
   </head>
   <body>
@@ -64,27 +61,50 @@
       </div>
 
       <div class="container-contract">
-        {% for contrato in contratos %}
-        <div class="contract-card">
-          <h2>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h2>
-          <p><strong>Objeto:</strong> {{ contrato.objeto }}</p>
-          <p><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
-          <p>
-            <strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado
-            }}
-          </p>
-          <p><strong>Status:</strong> {{ contrato.get_status_display }}</p>
+        {% for contrato in page_obj %}
 
-          {% with contrato.vigencia_set.first as vigencia %} {% if vigencia %}
-          <p><strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}</p>
-          <p><strong>Vigência Máxima:</strong> {{ vigencia.vigencia_max }}</p>
-          {% else %}
-          <p><em>Vigência não informada.</em></p>
-          {% endif %} {% endwith %}
-        </div>
+          <div class="contract-card">
+            <h3>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h2>
+            <p class='width'><strong>Objeto:</strong> {{ contrato.objeto }}</p>
+            <p class='width'><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
+            <p class='width'><strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado}}</p>
+            <p><strong>Status:</strong> {{ contrato.get_status_display }}</p>
+
+            {% with contrato.vigencia_set.first as vigencia %}
+              {% if vigencia %}
+                <p class='width'><strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}</p>
+                <p><strong>Vigência Máxima:</strong> {{ vigencia.vigencia_max }}</p>
+              {% else %}
+                <p><em>Vigência não informada.</em></p>
+              {% endif %}
+            {% endwith %}
+          </div>
+
         {% empty %}
-        <p>Nenhum contrato encontrado.</p>
+          <p>Nenhum contrato encontrado.</p>
         {% endfor %}
+      </div>
+
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page=1">
+            <i class="fa-solid fa-angle-double-left"></i>
+          </a>
+          <a href="?page={{ page_obj.previous_page_number }}">
+            <i class="fa-solid fa-angle-left"></i>
+          </a>
+        {% endif %}
+
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} : </span>
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">
+            <i class="fa-solid fa-angle-right"></i>
+          </a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">
+            <i class="fa-solid fa-angle-double-right"></i>
+          </a>
+        {% endif %}
       </div>
 
       <div class="footer">

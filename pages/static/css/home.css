@@ -258,11 +258,31 @@ input[type="file"] {
 }
 
 .historical-contracts {
-  width: 1428px;
-  height: 350px;
-  border: 2px solid #004a88;
+  display: flex;
+  justify-content: center;
+  align-items: space-between;
+  flex-direction: column;
+  width: 96%;
+  border: 1px solid #004a88;
   margin: 40px;
-  border-radius: 10px;
+  background-color: aliceblue;
+}
+
+.contract-item{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-family: 'Robot', sans-serif;
+  padding: 10px;
+  border-bottom: 1px solid black;
+}
+
+.width{
+  width: 400px;
+}
+
+.end{
+  padding-left: 200px;
 }
 
 .footer {

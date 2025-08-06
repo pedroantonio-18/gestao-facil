@@ -130,7 +130,6 @@
   font-size: 15px;
 }
 
-
 .switch {
   position: relative;
   display: inline-block;
@@ -188,8 +187,8 @@ input:checked + .slider::before {
   width: 100%;
 }
 
-.profile-title h1, .profile-title
-a {
+.profile-title h1,
+.profile-title a {
   margin: 20px 40px;
 }
 
@@ -213,16 +212,58 @@ a {
   height: 100%;
 }
 
-.container-contract{
+.container-contract {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 95%;
-  height: 900px;
+  flex-direction: column;
   background-color: aliceblue;
   margin: 40px;
-  border-radius: 10px;
+  width: 95%;
   border: 1px solid #004a88;
+}
+
+.contract-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Roboto", sans-serif;
+  font-size: 15px;
+  border-bottom: 1px solid black;
+  padding: 10px;
+  gap: 30px;
+}
+
+.contract-card h3 {
+  width: 200px;
+}
+
+.width {
+  width: 200px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  margin-bottom: 30px;
+  font-weight: 600;
+  gap: 15px;
+}
+
+.pagination a {
+  background-color: #00579b;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #f7f7f7;
+}
+
+.pagination a:hover {
+  color: #00579b;
+  background-color: #f7f7f7;
+  border: 1px solid #00579b;
 }
 
 .footer {
