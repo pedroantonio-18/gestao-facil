@@ -11,9 +11,6 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 # Adicione hosts locais
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
-# A lista abaixo sobrescreve a anterior. Se quiser permitir hosts, adicione-os aqui.
-ALLOWED_HOSTS = []
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -21,7 +18,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'config',
     'core',
     'contratos',
@@ -30,7 +26,6 @@ INSTALLED_APPS = [
     'penalidades',
     'pagamentos',
     'pages.apps.PagesConfig',
-    'django_browser_reload',
 ]
 
 MIDDLEWARE = [
@@ -41,7 +36,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'

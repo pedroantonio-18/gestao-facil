@@ -21,7 +21,6 @@ class Contrato(models.Model):
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='ativo')
 
-    @property
     def __str__(self):
         return f'Contrato {self.numero_contrato} - {self.entidade}'
 
@@ -90,7 +89,7 @@ class Email_Contato(models.Model):
 
 class Gestor(models.Model):
     # Dados do gestor
-    nome = models.CharField(blank=True, null=True, max_length=50, verbose_name='Nome do Órgão Gestor')
+    nome = models.CharField(blank=True, null=True, max_length=100, verbose_name='Nome do Órgão Gestor')
     email = models.EmailField(blank=True, null=True, verbose_name='Email do Gestor')
     receber_emails = models.BooleanField(verbose_name='Deseja receber e-mails?', default=True)
 
@@ -107,7 +106,7 @@ class Links(models.Model):
 
 class Garantia(models.Model):
     # Dados da garantia
-    tipo_garantia = models.CharField(max_length=50, blank=True, null=True, verbose_name='Tipo de Garantia')
+    tipo_garantia = models.CharField(max_length=255, blank=True, null=True, verbose_name='Tipo de Garantia')
     valor_garantia = models.DecimalField(blank=True, null=True, max_digits=11, decimal_places=2, verbose_name='Valor da Garantia')
 
     # Relações (chaves estrangeiras)
