@@ -1,11 +1,12 @@
 from django.db import models
-import uuid
+from django.utils import timezone
 from datetime import date, timedelta
+import uuid
 
 class Contrato(models.Model):
     # Identificadores
     processo_sei = models.CharField(max_length=30, verbose_name='Processo SEI Formatado')
-    numero_contrato = models.CharField(max_length=10, verbose_name="Contrato", primary_key=True)
+    numero_contrato = models.CharField(max_length=10, verbose_name="Contrato", unique=True)
 
     # Dados do contrato
     objeto = models.TextField(verbose_name='Objeto do Contrato')
@@ -23,6 +24,24 @@ class Contrato(models.Model):
 
     def __str__(self):
         return f'Contrato {self.numero_contrato} - {self.entidade}'
+    
+    @property
+    def gerar_numero_contrato(self):
+        ano_atual = timezone.now().year
+        
+        contratos_ano_atual = Contrato.objects.filter(numero_contrato__endswith=f'/{ano_atual}')
+        
+        if contratos_ano_atual.exists():
+            ultima_numeracao = max(
+                int(c.numero_contrato.split('/')[0])
+                for c in contratos_ano_atual
+            )
+            nova_numeracao = ultima_numeracao + 1
+        else:
+            nova_numeracao = 1
+            
+        return f'{nova_numeracao}/{ano_atual}'
+        
 
 class Vigencia(models.Model):
     # Vigências

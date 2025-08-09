@@ -8,9 +8,9 @@ def enviar_alerta_email(contrato, vigencia, dias_restantes, destinatarios_info):
         url_validacao = info['url_validacao']
         
         if dias_restantes > 0:
-            assunto = f'[TRF1] Alerta: {contrato.__str__} vence em {dias_restantes} dias'
+            assunto = f'[TRF1] Alerta: {str(contrato)} vence em {dias_restantes} dias'
         else:
-            assunto = f'[TRF1] Alerta: {contrato.__str__} venceu!'
+            assunto = f'[TRF1] Alerta: {str(contrato)} venceu!'
 
         corpo_html = render_to_string('emails/alerta_vencimento.html', {
             'contrato': contrato,

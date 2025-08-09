@@ -3,9 +3,9 @@ from requests import post
 
 def enviar_alerta_teams(contrato, vigencia, dias_restantes, contato, gestor):
     if dias_restantes > 0:
-        title = f'⚠️ Alerta - Vencimento Próximo: {contrato.__str__} vence em {dias_restantes} dias'
+        title = f'⚠️ Alerta - Vencimento Próximo: {str(contrato)} vence em {dias_restantes} dias'
     else:
-        title = f'⚠️ Alerta - Contrato Vencido: {contrato.__str__} venceu'
+        title = f'⚠️ Alerta - Contrato Vencido: {str(contrato)} venceu'
 
     vigencia_atual = vigencia.vigencia_atual
 
@@ -23,4 +23,4 @@ def enviar_alerta_teams(contrato, vigencia, dias_restantes, contato, gestor):
         post(url=settings.TEAMS_WEBHOOK, json=mensagem)
         print('Mensagem enviada com sucesso para o Teams')
     except Exception as e:
-        print('Erro ao enviar mensagem para o Teams')
+        print(f'Erro ao enviar mensagem para o Teams: {e}')
