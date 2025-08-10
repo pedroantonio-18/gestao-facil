@@ -175,34 +175,6 @@ input:checked + .slider::before {
   transform: translateX(30px);
 }
 
-.profile-title {
-  color: #f7f7f7;
-  font-family: "Roboto", sans-serif;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #00579b;
-  height: 100px;
-  margin-top: 80px;
-  width: 100%;
-}
-
-.profile-title h1,
-.profile-title a {
-  margin: 20px 40px;
-}
-
-.go-home {
-  font-family: "Roboto", sans-serif;
-  border-radius: 10px;
-  border: none;
-  background-color: #f7f7f7;
-  color: #00579b;
-  padding: 10px 20px;
-  font-size: 15px;
-  cursor: pointer;
-}
-
 .content {
   display: flex;
   flex-direction: column;
@@ -218,28 +190,128 @@ input:checked + .slider::before {
   align-items: center;
   flex-direction: column;
   background-color: aliceblue;
-  margin: 40px;
   width: 95%;
   border: 1px solid #004a88;
+  margin-top: 120px;
+}
+
+.contract-labels {
+  display: grid;
+  grid-template-columns: 1fr 2.75fr 2.25fr 1.75fr 1.25fr 1.75fr 1fr 1.6fr 1.6fr 0.3fr;
+  gap: 26px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+  padding: 9px 18px;
+  border-bottom: 1px solid black;
 }
 
 .contract-card {
+  display: grid;
+  grid-template-columns: 1fr 2.75fr 2.25fr 1.75fr 1.25fr 1.75fr 1fr 1.6fr 1.6fr 0.3fr;
+  gap: 26px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  border-bottom: 1px solid black;
+  padding: 9px 18px;
+}
+
+.contract-card svg {
+  cursor: pointer;
+}
+
+.contract-edit {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  width: 960px;
+  height: 640px;
+  opacity: 0;
+  pointer-events: none;
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.contract-edit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 9998;
+}
+
+.contract-edit.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+.contract-edit-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.close-contract-edit {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.close-contract-edit svg {
+  stroke: #333;
+  transition: stroke 0.4s ease;
+}
+
+.close-contract-edit:hover svg {
+  stroke: #00579b;
+}
+
+.contract-edit-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-family: "Roboto", sans-serif;
+}
+
+.contract-form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.contract-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  margin-top: 10px;
+  background-color: aliceblue;
+  border: 1px solid #004a88;
+  border-radius: 10px;
+}
+
+.contract-form-card label {
   font-size: 15px;
-  border-bottom: 1px solid black;
-  padding: 10px;
-  gap: 30px;
+  font-weight: 600;
 }
 
-.contract-card h3 {
-  width: 200px;
-}
-
-.width {
-  width: 200px;
+.cant-edit {
+  font-size: 13px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #ce0909;
 }
 
 .pagination {
@@ -247,6 +319,7 @@ input:checked + .slider::before {
   align-items: center;
   justify-content: center;
   font-family: "Roboto", sans-serif;
+  margin-top: 20px;
   margin-bottom: 30px;
   font-weight: 600;
   gap: 15px;
@@ -264,46 +337,6 @@ input:checked + .slider::before {
   color: #00579b;
   background-color: #f7f7f7;
   border: 1px solid #00579b;
-}
-
-.footer {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  background-color: #004a88;
-  height: 160px;
-}
-
-.localizacao {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-family: "Roboto", sans-serif;
-  color: #f7f7f7;
-  margin: 20px 40px;
-}
-
-.info {
-  color: #c7c7c7;
-  font-size: 15px;
-}
-
-.info-item {
-  margin: 10px 0px;
-}
-
-.line {
-  width: 2px;
-  height: 120px;
-  background-color: #f7f7f7;
-  margin: 0px 40px;
-}
-
-.logo_footer {
-  width: 150px;
-  margin: 0px 100px 0px 40px;
 }
 
 .footer-info {
