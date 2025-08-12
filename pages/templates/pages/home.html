@@ -21,16 +21,20 @@
 
         <div>
           <ul class="services-list">
-            <li class="services-item">
-              <a href="{% url 'contracts' %}">Contratos</a>
+            <li class="upload-container">
+              <form action="/upload" method="post" enctype="multipart/form-data">
+                <label for="arquivo" class="upload-label">REGISTRE SEU CONTRATO</label>
+                <input type="file" id="arquivo" name="arquivo">
+              </form>
             </li>
-            <spam >|</spam>
+             <spam>|</spam>
             <li class="services-item">
               <a href="{% url 'update_contracts' %}">Atualizar Contratos</a>
             </li>
             <spam>|</spam>
             <li class="services-item notification"><spam>Notificações</spam></li>
           </ul>
+
           <div class="modal-container">
             <h3>Notificações</h3>
 
@@ -45,11 +49,6 @@
         </div>
 
         <div class="utils">
-          <label class="switch">
-            <input type="checkbox" />
-            <spam class="slider"></spam>
-          </label>
-
           <a class="btn-user" href="{% url 'profile' %}">USER</a>
         </div>
       </nav>
@@ -57,64 +56,113 @@
 
     <main class="content">
       <div class="contracts">
-        <input class="search-contract" type="text" name="search" placeholder="Informe o número ou nome do contrato">
-        <button class="search-btn"><i class="fas fa-search"></i></button>
-      </input>
+        <form class="form-input" method="get" action="">
+        <input class="search-contract" type="text" name="search" value="{{search }}" 
+        placeholder="Informe o número, nome ou CNPJ do contrato">
 
-        <div class="upload-container">
-          <form action="/upload" method="post" enctype="multipart/form-data">
-          <label for="arquivo" class="upload-label">REGISTRE SEU CONTRATO</label>
-          <input type="file" id="arquivo" name="arquivo">
-          </form>
-        </div>
+        <button class="search-btn" type="submit">
+          <i class="fas fa-search"></i>
+        </button>
+      </form>
       </div>
 
-      <div class="contracts-update">
-        <h1 class="register-title">Registro de contratos recem atualizados</h1>
+      {% if contratos_filtrados %}
+        <div class="container-contract-filtered">
+          <h2 class="search-result-title">Resultados para busca: "{{search}}"</h2>
 
-        <div class="historical-contracts">
-
-          {% for contrato in contratos_recentes %}
-            <div class="contract-item">
-              <h3 class='width'>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h3>
+          {% for contrato in contratos_filtrados %}
+            <div class="contract-card-filtered">
+              <h3>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h3>
               <p class='width'><strong>Objeto:</strong> {{ contrato.objeto }}</p>
-              <p class='width end'><strong>Vigência Atual:</strong> {{ contrato.ultima_vigencia }}</p>
-            </div>
-          {% empty %}
-            <p>Nenhum contrato recente disponível.</p>
-          {% endfor %}
+              <p class='width'><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
+              <p class='width'><strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado}}</p>
+              <p><strong>Status:</strong> {{ contrato.get_status_display }}</p>
 
+              {% with contrato.vigencia_set.first as vigencia %}
+                {% if vigencia %}
+                  <p class='width'><strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}</p>
+                  <p><strong>Vigência Máxima:</strong> {{ vigencia.vigencia_max }}</p>
+                {% else %}
+                  <p><em>Vigência não informada.</em></p>
+                {% endif %}
+              {% endwith %}
+            </div>
+
+          {% empty %}
+            <p>Nenhum contrato encontrado para esta busca.</p>
+          {% endfor %}
         </div>
+      {% endif %}
+  </div>
+      
+      <div class="contracts-title">
+        <h1>Histórico de Contratos</h1>
+      </div>   
+
+      <div class="container-contract">
+        {% for contrato in page_obj %}
+          <div class="contract-card">
+            <h3>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h2>
+            <p class='width'><strong>Objeto:</strong> {{ contrato.objeto }}</p>
+            <p class='width'><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
+            <p class='width'><strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado}}</p>
+            <p><strong>Status:</strong> {{ contrato.get_status_display }}</p>
+
+            {% with contrato.vigencia_set.first as vigencia %}
+              {% if vigencia %}
+                <p class='width'><strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}</p>
+                <p><strong>Vigência Máxima:</strong> {{ vigencia.vigencia_max }}</p>
+              {% else %}
+                <p><em>Vigência não informada.</em></p>
+              {% endif %}
+            {% endwith %}
+          </div>
+
+        {% empty %}
+          <p>Nenhum contrato encontrado.</p>
+        {% endfor %}
       </div>
 
-      <div class="footer">
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page=1">
+            <i class="fa-solid fa-angle-double-left"></i>
+          </a>
+          <a href="?page={{ page_obj.previous_page_number }}">
+            <i class="fa-solid fa-angle-left"></i>
+          </a>
+        {% endif %}
 
-        <div class="localizacao">
-            <h2>Rua 19, nº 244, Centro</h2>
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} : </span>
 
-            <ul class="info">
-              <li class="info-item"><strong>CEP:</strong> 74030-090 Goiânia/GO</li>
-              <li class="info-item"><strong>Telefone:</strong> (62) 3226-1500</li>
-              <li class="info-item"><strong>CNPJ:</strong> 05.439.950/0001-30</li>
-            </ul>
-        </div>
+        <form method="get" id="pageForm">
+          <label for="page_input"></label>
+          <input 
+            type="number" 
+            id="page_input" 
+            name="page" 
+            min="1" 
+            max="{{ page_obj.paginator.num_pages }}" 
+            value="{{ page_obj.number }}"
+          >
+        </form>
 
-        <div class="line"></div>
-
-        <iframe src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d244622.50368607216!2d-49.53920458466345!3d-16.665539375156392!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x935ef17cabdf4161%3A0xc5a966b9b525c720!2sJusti%C3%A7a%20Federal%20-%20R.%2019%2C%20244%20-%20St.%20Central%2C%20Goi%C3%A2nia%20-%20GO%2C%2074030-090!3m2!1d-16.6779242!2d-49.253507199999994!5e0!3m2!1spt-PT!2sbr!4v1753813672968!5m2!1spt-PT!2sbr" width="440" height="124" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-
-        <div class="line"></div>
-
-        <img
-          class="logo_footer"
-          src="{% static 'assets/JF_logo-md.png' %}"
-          alt="Logo da Justiça federal"
-        />
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">
+            <i class="fa-solid fa-angle-right"></i>
+          </a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">
+            <i class="fa-solid fa-angle-double-right"></i>
+          </a>
+        {% endif %}
       </div>
     </main>
     
     <script type="module" src="{% static 'js/scripts.js' %}"></script>
 
+    {% if debug %}
+      <script src="http://localhost:8000/static/django_browser_reload/reload.js"></script>
+    {% endif %}
   </body>
   <footer class="footer-info">
     <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>

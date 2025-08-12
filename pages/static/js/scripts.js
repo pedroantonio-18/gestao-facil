@@ -1,3 +1,7 @@
-import { openModal } from './modal.js'
+import { inputPages } from './pagesInput.js';
+import { openModal } from './modal.js';
 
-openModal();
+document.addEventListener('DOMContentLoaded', () => {
+    openModal();
+    inputPages();
+});
