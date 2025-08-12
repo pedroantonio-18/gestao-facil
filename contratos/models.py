@@ -14,6 +14,7 @@ class Contrato(models.Model):
     cnpj_cpf = models.CharField(max_length=30, verbose_name='CNPJ/CPF')
     observacoes = models.TextField(blank=True, null=True, verbose_name='Observações sobre o Contrato')
     valor_atualizado = models.DecimalField(max_digits=11, decimal_places=2, verbose_name='Valor Atualizado do Contrato')
+    proximo_ao_vencimento = models.BooleanField(default=False, verbose_name='Contrato Está Próximo de Vencer')
     
     STATUS_CHOICES = [
         ('ativo', 'Ativo'),
@@ -54,8 +55,8 @@ class Vigencia(models.Model):
 
     # Calcula a vigência máxima a partir da vigência original para armazenar esse valor no banco de maneira persistente
     @property
-    def calcular_vigencia_max(self):
-        return self.vigencia_original + timedelta(days=5*365)
+    def calcular_vigencia_max(self, anos):
+        return self.vigencia_original + timedelta(days=anos*365)
         
     # Calcula os meses restantes para o vencimento do contrato
     @property

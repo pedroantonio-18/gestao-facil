@@ -6,13 +6,12 @@ from contratos.models import Contrato
 def home(request):
     search = request.GET.get('search', '')
 
-    # Lista completa (paginada)
     todos_contratos = Contrato.objects.all()
     paginator = Paginator(todos_contratos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # Lista filtrada (busca)
+
     contratos_filtrados = None
     if search:
         contratos_filtrados = Contrato.objects.filter(
