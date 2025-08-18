@@ -1,48 +1,50 @@
-{%load static%}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Atualizar Contratos</title>
+
     <link rel="stylesheet" href="{% static 'css/global.css' %}" />
     <link rel="stylesheet" href="{% static 'css/updateContracts-styles.css' %}"/>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>Atualizar Contratos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   </head>
   <body>
+
     <header>
       <nav class="navigation">
         <img
           class="logo_JF"
           src="{% static 'assets/Logo-j-Federal.png' %}"
-          alt="Logo da Justiça federal"
+          alt="Logo da Justiça Federal"
         />
 
         <div>
           <ul class="services-list">
-            <li class="">
-                <form action="/upload" method="post" enctype="multipart/form-data">
+            <li>
+              <form action="/upload" method="post" enctype="multipart/form-data">
                 <label for="arquivo" class="upload-label">REGISTRE SEU CONTRATO</label>
                 <input type="file" id="arquivo" name="arquivo">
               </form>
             </li>
-            <spam>|</spam>
+            <span>|</span>
             <li class="services-item active">Atualizar Contratos</li>
-            <spam>|</spam>
-            <li class="services-item notification">Notificaçôes</li>
+            <span>|</span>
+            <li class="services-item notification">Notificações</li>
           </ul>
 
           <div class="modal-container">
             <h3>Notificações</h3>
-
             <div class="modal-itens">
               <ul class="notifications">
                 <li>Contratos a vencer</li>
                 <li>Contratos vencidos</li>
               </ul>
             </div>
-            <button class='close-modal'>Fechar</button>
+            <button class="close-modal">Fechar</button>
           </div>
         </div>
 
@@ -60,24 +62,141 @@
 
       <section class="container-list">
         <div class="edit-contracts">
-          <div class="contract-container">
-            <h1>Contrato n°0000</h1>
+          <div class="contract-edit-top">
+            <h2>Editar Contratos</h2>
+          </div>
+
+          <div class="edit-card">
+            <div class="contract-form-card">
+              <label for="numero_contrato"><strong>Nº do Contrato</strong></label>
+              <input type="text" id="numero_contrato" name="numero_contrato" disabled>
+              <spam class="warning">
+                <i class="fas fa-times-circle icon-error"></i>
+                <p>Este campo não pode ser alterado</p>
+              </spam>
+            </div>
+
+            <div class="contract-form-card">
+              <label for="cnpj"><strong>CPF/CNPJ</strong></label>
+              <input type="text" id="cnpj" name="cnpj" disabled>
+              <spam class="warning">
+                <i class="fas fa-times-circle icon-error"></i>
+                <p>Este campo não pode ser alterado</p>
+              </spam>
+            </div>
+
+            <div class="contract-form-card">
+              <label for="contratada"><strong>Contratada</strong></label>
+              <input type="text" id="contratada" name="contratada" disabled>
+              <spam class="warning">
+                <i class="fas fa-times-circle icon-error"></i>
+                <p>Este campo não pode ser alterado</p>
+              </spam>
+            </div>
+
+            <div class="contract-form-card">
+              <label for="objeto"><strong>Objeto</strong></label>
+              <textarea id="objeto" name="objeto"></textarea>
+            </div>
+
+
+            <div class="contract-form-card">
+              <label for="gestor"><strong>Gestor</strong></label>
+              <input type="text" id="gestor" name="gestor">
+            </div>
+
+            <div class="contract-form-card">
+              <label for="valor_atualizado"><strong>Valor Atualizado</strong></label>
+              <input type="text" id="valor_atualizado" name="valor_atualizado">
+            </div>
+
+            <div class="contract-form-card">
+              <label for="status"><strong>Status</strong></label>
+              <select id="status" name="status">
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+              </select>
+            </div>
+
+            <div class="contract-form-card">
+              <label for="vigencia_atual"><strong>Vigência Atual</strong></label>
+              <input type="date" id="vigencia_atual" name="vigencia_atual">
+            </div>
+
+            <div class="contract-form-card">
+              <label for="vigencia_maxima"><strong>Vigência Máxima</strong></label>
+              <input type="date" id="vigencia_maxima" name="vigencia_maxima">
+            </div>
+
+            <div class="finish-operation">
+            <button class="save-button">
+              <i class="fas fa-check-circle icon-confirm"></i>
+              <spam>Salvar Edição</spam>
+            </button>
+            <button class="close-button">
+              <i class="fas fa-times-circle icon-error"></i>
+              <spam>Sair</spam>
+            </button>
+          </div>
           </div>
         </div>
-
+          
         <div class="contracts-list">
           <div class="field-search">
-            <input class="search-contract" type="text" name="search" placeholder="Informe o número ou nome do contrato"></input>
-            <button class="search-btn"><i class="fas fa-search"></i></button>
+            <form method="get">
+              <input 
+                class="search-contract" 
+                type="text" 
+                name="search" 
+                value="{{ search }}" 
+                placeholder="Informe o número ou nome do contrato"
+              >
+              <button class="search-btn"><i class="fas fa-search"></i></button>
+            </form>
           </div>
+
+          {% if page_obj %}
+            <ul class="contracts-ul">
+              {% for contrato in page_obj %}
+                <li class="contract-item"
+                    data-numero="{{ contrato.numero_contrato }}"
+                    data-entidade="{{ contrato.entidade }}"
+                    data-cnpj="{{ contrato.cnpj_cpf }}"
+                    data-objeto="{{ contrato.objeto|escapejs }}"
+                    data-gestor="{{ contrato.gestor }}"
+                    data-valor="{{ contrato.valor_atualizado }}"
+                    data-status="{{ contrato.status }}"
+                    data-vigencia-atual="{{ contrato.vigencia_atual|date:'Y-m-d' }}"
+                    data-vigencia-maxima="{{ contrato.vigencia_maxima|date:'Y-m-d' }}"
+                >
+                  <strong>Contrato nº:</strong> {{ contrato.numero_contrato }}<br>
+                  <strong>Entidade:</strong> {{ contrato.entidade }}<br>
+                  <strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}
+                </li>
+
+              {% endfor %}
+            </ul>
+            
+            <div class="pagination">
+              {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&search={{ search }}">Anterior</a>
+              {% endif %}
+
+              <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+              {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&search={{ search }}">Próxima</a>
+              {% endif %}
+            </div>
+          {% endif %}
         </div>
       </section>
     </main>
+
     <footer class="footer-info">
-      <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
+      <p>&copy; <strong>2025 SJGO</strong> • Todos os direitos reservados •</p>
     </footer>
 
     <script type="module" src="{% static 'js/scripts.js' %}"></script>
-
   </body>
 </html>

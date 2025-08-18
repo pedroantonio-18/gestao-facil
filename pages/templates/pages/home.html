@@ -1,4 +1,4 @@
-{%load static%}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/global.css' %}" />
     <link rel="stylesheet" href="{% static 'css/home.css' %}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="{% static 'assets/favicon.png' %}">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <title>Gestão Fácil</title>
   </head>
   <body>
@@ -24,28 +28,57 @@
             <li class="upload-container">
               <form action="/upload" method="post" enctype="multipart/form-data">
                 <label for="arquivo" class="upload-label">REGISTRE SEU CONTRATO</label>
-                <input type="file" id="arquivo" name="arquivo">
+                <input type="file" id="arquivo" name="arquivo" />
               </form>
             </li>
-             <spam>|</spam>
+            <span>|</span>
             <li class="services-item">
               <a href="{% url 'update_contracts' %}">Atualizar Contratos</a>
             </li>
-            <spam>|</spam>
-            <li class="services-item notification"><spam>Notificações</spam></li>
+            <span>|</span>
+            <li class="services-item notification">
+              <span>Notificações</span>
+            </li>
           </ul>
 
           <div class="modal-container">
-            <h3>Notificações</h3>
+  <h3>Notificações</h3>
 
-            <div class="modal-itens">
-              <ul class="notifications">
-                <li>Contratos a vencer</li>
-                <li>Contratos vencidos</li>
-              </ul>
-            </div>
-            <button class='close-modal'>Fechar</button>
-          </div>
+  <div class="modal-itens">
+
+    <p><strong>Contratos a vencer:</strong></p>
+    <ul class="notifications">
+      {% for contrato in contratos_a_vencer %}
+        <li>
+          <a href="{% url 'update_contracts' %}?search={{ contrato.numero_contrato }}">
+            {{ contrato.numero_contrato }} - {{ contrato.entidade }}
+            (vence em {{ contrato.vigencia_set.first.vigencia_atual }})
+          </a>
+        </li>
+      {% empty %}
+        <li>Nenhum contrato prestes a vencer.</li>
+      {% endfor %}
+    </ul>
+
+    <p><strong>Contratos vencidos:</strong></p>
+    <ul class="notifications">
+      {% for contrato in contratos_vencidos %}
+        <li>
+          <a href="{% url 'update_contracts' %}?search={{ contrato.numero_contrato }}">
+            {{ contrato.numero_contrato }} - {{ contrato.entidade }}
+            (venceu em {{ contrato.vigencia_set.first.vigencia_atual }})
+          </a>
+        </li>
+      {% empty %}
+        <li>Nenhum contrato vencido.</li>
+      {% endfor %}
+    </ul>
+
+  </div>
+
+  <button class="close-modal">Fechar</button>
+</div>
+
         </div>
 
         <div class="utils">
@@ -55,116 +88,225 @@
     </header>
 
     <main class="content">
+
       <div class="contracts">
         <form class="form-input" method="get" action="">
-        <input class="search-contract" type="text" name="search" value="{{search }}" 
-        placeholder="Informe o número, nome ou CNPJ do contrato">
-
-        <button class="search-btn" type="submit">
-          <i class="fas fa-search"></i>
-        </button>
-      </form>
+          <input class="search-contract" type="text" name="numero" value="{{ numero }}" placeholder="INFORME O NÚMERO DO CONTRATO" />
+          <input class="search-contract" type="text" name="entidade" value="{{ entidade }}" placeholder="INFORME A ENTIDADE" />
+          <input class="search-contract" type="text" name="documento" value="{{ documento }}" placeholder="INFORME O CNPJ/CPF" />
+          <button class="search-btn" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
       </div>
 
       {% if contratos_filtrados %}
         <div class="container-contract-filtered">
-          <h2 class="search-result-title">Resultados para busca: "{{search}}"</h2>
-
+          <h2 class="search-result-title">Resultados da pesquisa</h2>
           {% for contrato in contratos_filtrados %}
             <div class="contract-card-filtered">
               <h3>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h3>
-              <p class='width'><strong>Objeto:</strong> {{ contrato.objeto }}</p>
-              <p class='width'><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
-              <p class='width'><strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado}}</p>
+              <p class="width"><strong>Objeto:</strong> {{ contrato.objeto }}</p>
+              <p class="width"><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
+              <p class="width"><strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado }}</p>
               <p><strong>Status:</strong> {{ contrato.get_status_display }}</p>
-
               {% with contrato.vigencia_set.first as vigencia %}
                 {% if vigencia %}
-                  <p class='width'><strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}</p>
+                  <p class="width"><strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}</p>
                   <p><strong>Vigência Máxima:</strong> {{ vigencia.vigencia_max }}</p>
                 {% else %}
                   <p><em>Vigência não informada.</em></p>
                 {% endif %}
               {% endwith %}
             </div>
-
           {% empty %}
             <p>Nenhum contrato encontrado para esta busca.</p>
           {% endfor %}
         </div>
       {% endif %}
-  </div>
-      
+
       <div class="contracts-title">
         <h1>Histórico de Contratos</h1>
-      </div>   
+      </div>
 
       <div class="container-contract">
-        {% for contrato in page_obj %}
-          <div class="contract-card">
-            <h3>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h2>
-            <p class='width'><strong>Objeto:</strong> {{ contrato.objeto }}</p>
-            <p class='width'><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
-            <p class='width'><strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado}}</p>
-            <p><strong>Status:</strong> {{ contrato.get_status_display }}</p>
+      <div class="contract-labels">
+        <div><strong>Número</strong></div>
+        <div><strong>Entidade</strong></div>
+        <div><strong>Objeto</strong></div>
+        <div><strong>CNPJ/CPF</strong></div>
+        <div><strong>Valor Atualizado</strong></div>
+        <div><strong>Status</strong></div>
+        <div><strong>Vigência Atual</strong></div>
+        <div><strong>Vigência Máxima</strong></div>
+        <div></div>
+      </div>
 
+        {% for contrato in page_obj %}
+        <div class="contract-card"
+            data-numero="{{ contrato.numero_contrato }}"
+            data-entidade="{{ contrato.entidade }}"
+            data-objeto="{{ contrato.objeto }}"
+            data-cnpj="{{ contrato.cnpj_cpf }}"
+            data-gestor="{{ contrato.gestor }}"
+            data-valor="{{ contrato.valor_atualizado }}"
+            data-status="{{ contrato.get_status_display }}"
             {% with contrato.vigencia_set.first as vigencia %}
               {% if vigencia %}
-                <p class='width'><strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}</p>
-                <p><strong>Vigência Máxima:</strong> {{ vigencia.vigencia_max }}</p>
-              {% else %}
-                <p><em>Vigência não informada.</em></p>
+                data-vigencia-atual="{{ vigencia.vigencia_atual }}"
+                data-vigencia-maxima="{{ vigencia.vigencia_max }}"
               {% endif %}
-            {% endwith %}
+            {% endwith %}>
+            
+          <div>{{ contrato.numero_contrato }}</div>
+          <div>{{ contrato.entidade }}</div>
+          <div>{{ contrato.objeto }}</div>
+          <div>{{ contrato.cnpj_cpf }}</div>
+          <div>R$ {{ contrato.valor_atualizado }}</div>
+          <div>{{ contrato.get_status_display }}</div>
+
+          {% with contrato.vigencia_set.first as vigencia %}
+            {% if vigencia %}
+              <div>{{ vigencia.vigencia_atual }}</div>
+              <div>{{ vigencia.vigencia_max }}</div>
+            {% else %}
+              <div>Não informado</div>
+              <div>Não informado</div>
+            {% endif %}
+          {% endwith %}
+
+          <button class="btn-edit-icon">
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="edit-contracts">
+          <div class="contract-edit-top">
+            <h2>Editar Contratos</h2>
+            <i class="fas fa-sign-out-alt"></i>
           </div>
 
-        {% empty %}
-          <p>Nenhum contrato encontrado.</p>
-        {% endfor %}
-      </div>
+          <div class="edit-card">
+            <div class="contract-form-card">
+              <label for="numero_contrato"><strong>Nº do Contrato</strong></label>
+              <input type="text" id="numero_contrato" name="numero_contrato" disabled>
+              <spam class="warning">
+                <i class="fas fa-times-circle icon-error"></i>
+                <p>Este campo não pode ser alterado</p>
+              </spam>
+            </div>
+
+            <div class="contract-form-card">
+              <label for="cnpj"><strong>CPF/CNPJ</strong></label>
+              <input type="text" id="cnpj" name="cnpj" disabled>
+              <spam class="warning">
+                <i class="fas fa-times-circle icon-error"></i>
+                <p>Este campo não pode ser alterado</p>
+              </spam>
+            </div>
+
+            <div class="contract-form-card">
+              <label for="contratada"><strong>Contratada</strong></label>
+              <input type="text" id="contratada" name="contratada" disabled>
+              <spam class="warning">
+                <i class="fas fa-times-circle icon-error"></i>
+                <p>Este campo não pode ser alterado</p>
+              </spam>
+            </div>
+
+            <div class="contract-form-card">
+              <label for="objeto"><strong>Objeto</strong></label>
+              <textarea id="objeto" name="objeto"></textarea>
+            </div>
+
+
+            <div class="contract-form-card">
+              <label for="gestor"><strong>Gestor</strong></label>
+              <input type="text" id="gestor" name="gestor">
+            </div>
+
+            <div class="contract-form-card">
+              <label for="valor_atualizado"><strong>Valor Atualizado</strong></label>
+              <input type="text" id="valor_atualizado" name="valor_atualizado">
+            </div>
+
+            <div class="contract-form-card">
+              <label for="status"><strong>Status</strong></label>
+              <select id="status" name="status">
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+              </select>
+            </div>
+
+            <div class="contract-form-card">
+              <label for="vigencia_atual"><strong>Vigência Atual</strong></label>
+              <input type="date" id="vigencia_atual" name="vigencia_atual">
+            </div>
+
+            <div class="contract-form-card">
+              <label for="vigencia_maxima"><strong>Vigência Máxima</strong></label>
+              <input type="date" id="vigencia_maxima" name="vigencia_maxima">
+            </div>
+
+            <div class="finish-operation">
+            <button class="save-button">
+              <i class="fas fa-check-circle icon-confirm"></i>
+              <spam>Salvar Edição</spam>
+            </button>
+            <button class="close-button">
+              <i class="fas fa-times-circle icon-error"></i>
+              <spam>Sair</spam>
+            </button>
+          </div>
+          </div>
+        </div>
+
 
       <div class="pagination">
         {% if page_obj.has_previous %}
-          <a href="?page=1">
-            <i class="fa-solid fa-angle-double-left"></i>
-          </a>
-          <a href="?page={{ page_obj.previous_page_number }}">
-            <i class="fa-solid fa-angle-left"></i>
-          </a>
+        <a href="?page=1">
+          <i class="fa-solid fa-angle-double-left"></i>
+        </a>
+        <a href="?page={{ page_obj.previous_page_number }}">
+          <i class="fa-solid fa-angle-left"></i>
+        </a>
         {% endif %}
 
-        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} : </span>
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} :</span>
 
         <form method="get" id="pageForm">
           <label for="page_input"></label>
-          <input 
-            type="number" 
-            id="page_input" 
-            name="page" 
-            min="1" 
-            max="{{ page_obj.paginator.num_pages }}" 
+          <input
+            type="number"
+            id="page_input"
+            name="page"
+            min="1"
+            max="{{ page_obj.paginator.num_pages }}"
             value="{{ page_obj.number }}"
-          >
+          />
         </form>
 
         {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}">
-            <i class="fa-solid fa-angle-right"></i>
-          </a>
-          <a href="?page={{ page_obj.paginator.num_pages }}">
-            <i class="fa-solid fa-angle-double-right"></i>
-          </a>
+        <a href="?page={{ page_obj.next_page_number }}">
+          <i class="fa-solid fa-angle-right"></i>
+        </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">
+          <i class="fa-solid fa-angle-double-right"></i>
+        </a>
         {% endif %}
       </div>
     </main>
-    
+
     <script type="module" src="{% static 'js/scripts.js' %}"></script>
 
     {% if debug %}
-      <script src="http://localhost:8000/static/django_browser_reload/reload.js"></script>
+    <script src="http://localhost:8000/static/django_browser_reload/reload.js"></script>
     {% endif %}
   </body>
+
   <footer class="footer-info">
-    <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
+    <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservados•</p>
   </footer>
 </html>
