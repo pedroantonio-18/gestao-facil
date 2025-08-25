@@ -7,7 +7,7 @@ urlpatterns = [
     
     path('contratos', include('contratos.urls')),
     
-    path('', home, name='home'),
     path('perfil/', profile, name='profile'),
     path('atualizar-contratos/', updateContracts, name='update_contracts'),
+    path('', include('pages.urls')),
 ]
