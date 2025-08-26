@@ -331,7 +331,7 @@
                                                 
                                                 <div class="contact-emails-wrapper">
                                                     <div class="contact-info-emails">
-                                                        {% for email in contato.email_contato_set.all %}
+                                                        {% for email in contato.emailcontato_set.all %}
                                                             <label for="email">Email {{ forloop.counter }}</label>
                                                             <input required type="email" id="email" name="email" value="{{ email.email }}">
                                                         {% endfor %}
@@ -347,7 +347,7 @@
                                                 
                                                 <div class="contact-phones-wrapper">
                                                     <div class="contact-info-phones">
-                                                        {% for telefone in contato.telefone_contato_set.all %}
+                                                        {% for telefone in contato.telefonecontato_set.all %}
                                                             <label for="telefone">Telefone {{ forloop.counter }}</label>
                                                             <input required type="tel" id="telefone" name="telefone" value="{{ telefone.telefone }}">
                                                         {% endfor %}
