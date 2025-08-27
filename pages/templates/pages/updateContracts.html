@@ -8,12 +8,19 @@
 
     <title>Atualizar Contratos</title>
 
+    <link
+      href="{% static 'assets/favicon.png' %}"
+      rel="icon"
+      type="image/png"
+    />
     <link rel="stylesheet" href="{% static 'css/global.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/updateContracts-styles.css' %}"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/updateContracts-styles.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
   <body>
-
     <header>
       <nav class="navigation">
         <img
@@ -27,7 +34,7 @@
             <li>
               <form action="/upload" method="post" enctype="multipart/form-data">
                 <label for="arquivo" class="upload-label">REGISTRE SEU CONTRATO</label>
-                <input type="file" id="arquivo" name="arquivo">
+                <input type="file" id="arquivo" name="arquivo" />
               </form>
             </li>
             <span>|</span>
@@ -65,19 +72,167 @@
           <div class="contract-edit-top">
             <h2>Editar Contratos</h2>
           </div>
-          
+
+          <form method="POST" class="contract-form">
+            {% csrf_token %}
+
+            <div class="form-contract">
+              <h4>Contrato</h4>
+              <div class="form-grid">
+                <div class="contract-form-card">
+                  <label for="numero-contrato">Nº do Contrato</label>
+                  <p id="numero-contrato" name="numero-contrato">{{ contrato.numero_contrato }}</p>
+                  <span class="cant-edit">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-circle-x-icon lucide-circle-x"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="m15 9-6 6" />
+                      <path d="m9 9 6 6" />
+                    </svg>
+                    <p>Essa informação não pode ser modificada</p>
+                  </span>
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="processo-sei">Processo SEI</label>
+                  <p id="numero-contrato" name="numero-contrato">{{ contrato.processo_sei }}</p>
+                  <span class="cant-edit">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-circle-x-icon lucide-circle-x"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="m15 9-6 6" />
+                      <path d="m9 9 6 6" />
+                    </svg>
+                    <p>Essa informação não pode ser modificada</p>
+                  </span>
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="objeto">Objeto</label>
+                  <input type="text" id="objeto" name="objeto" value="{{ contrato.objeto }}" />
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="entidade">Contratada</label>
+                  <input type="text" id="entidade" name="entidade" value="{{ contrato.entidade }}" />
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="cpf_cnpj">CPF/CNPJ</label>
+                  <input type="text" id="cpf_cnpj" name="cpf_cnpj" value="{{ contrato.cnpj_cpf }}" />
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="observacoes">Observações</label>
+                  <textarea id="observacoes" name="observacoes">{{ contrato.observacoes }}</textarea>
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="valor_atualizado">Valor Atualizado</label>
+                  <input type="number" id="valor_atualizado" name="valor_atualizado" value="{{ contrato.valor_atualizado }}" />
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="status">Status</label>
+                  <select name="status" id="status">
+                    <option value="{{ contrato.status }}">{{ contrato.get_status_display }}</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="rescindido">Rescindido</option>
+                    <option value="finalizado">Finalizado</option>
+                  </select>
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="vigencia_original">Vigência Original</label>
+                  {% with contrato.vigencia_set.first as vigencia %}
+                    {% if vigencia %}
+                      <input type="date" id="vigencia_original" name="vigencia_original" value="{{ vigencia.vigencia_original|date:'Y-m-d' }}" />
+                    {% else %}
+                      <p><em>Vigência não informada.</em></p>
+                    {% endif %}
+                  {% endwith %}
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="vigencia_atual">Vigência Atual</label>
+                  {% with contrato.vigencia_set.first as vigencia %}
+                    {% if vigencia %}
+                      <input type="date" id="vigencia_atual" name="vigencia_atual" value="{{ vigencia.vigencia_atual|date:'Y-m-d' }}" />
+                    {% else %}
+                      <p><em>Vigência não informada.</em></p>
+                    {% endif %}
+                  {% endwith %}
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="vigencia_max">Vigência Máxima</label>
+                  <div>
+                    <input type="date" name="vigencia_max" id="vigencia_max" />
+                  </div>
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="link_planilhas_sei">Link Planilhas SEI</label>
+                  <div>
+                    <input type="text" name="link_planilhas_sei" id="link_planilhas_sei" value="{{ contrato.links_set.first.link_planilhas_sei }}" />
+                  </div>
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="link_convencao_coletiva_sei">Link Convenção Coletiva</label>
+                  <div>
+                    <input type="text" name="link_convencao_coletiva_sei" id="link_convencao_coletiva_sei" value="{{ contrato.links_set.first.link_convencao_coletiva_sei }}" />
+                  </div>
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="tipo_garantia">Tipo da Garantia</label>
+                  <div>
+                    <input type="text" name="tipo_garantia" id="tipo_garantia" value="{{ contrato.garantia_set.first.tipo_garantia }}" />
+                  </div>
+                </div>
+
+                <div class="contract-form-card">
+                  <label for="valor_garantia">Valor da Garantia</label>
+                  <div>
+                    <input type="text" name="valor_garantia" id="valor_garantia" value="{{ contrato.garantia_set.first.valor_garantia }}" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
-          
+
         <div class="contracts-list">
           <div class="field-search">
             <form method="get">
-              <input 
-                class="search-contract" 
-                type="text" 
-                name="search" 
-                value="{{ search }}" 
+              <input
+                class="search-contract"
+                type="text"
+                name="search"
+                value="{{ search }}"
                 placeholder="Informe o número ou nome do contrato"
-              >
+              />
               <button class="search-btn"><i class="fas fa-search"></i></button>
             </form>
           </div>
@@ -85,25 +240,25 @@
           {% if page_obj %}
             <ul class="contracts-ul">
               {% for contrato in page_obj %}
-                <li class="contract-item"
-                    data-numero="{{ contrato.numero_contrato }}"
-                    data-entidade="{{ contrato.entidade }}"
-                    data-cnpj="{{ contrato.cnpj_cpf }}"
-                    data-objeto="{{ contrato.objeto|escapejs }}"
-                    data-gestor="{{ contrato.gestor }}"
-                    data-valor="{{ contrato.valor_atualizado }}"
-                    data-status="{{ contrato.status }}"
-                    data-vigencia-atual="{{ contrato.vigencia_atual|date:'Y-m-d' }}"
-                    data-vigencia-maxima="{{ contrato.vigencia_maxima|date:'Y-m-d' }}"
+                <li
+                  class="contract-item"
+                  data-numero="{{ contrato.numero_contrato }}"
+                  data-entidade="{{ contrato.entidade }}"
+                  data-cnpj="{{ contrato.cnpj_cpf }}"
+                  data-objeto="{{ contrato.objeto|escapejs }}"
+                  data-gestor="{{ contrato.gestor }}"
+                  data-valor="{{ contrato.valor_atualizado }}"
+                  data-status="{{ contrato.status }}"
+                  data-vigencia-atual="{{ contrato.vigencia_atual|date:'Y-m-d' }}"
+                  data-vigencia-maxima="{{ contrato.vigencia_maxima|date:'Y-m-d' }}"
                 >
-                  <strong>Contrato nº:</strong> {{ contrato.numero_contrato }}<br>
-                  <strong>Entidade:</strong> {{ contrato.entidade }}<br>
+                  <strong>Contrato nº:</strong> {{ contrato.numero_contrato }}<br />
+                  <strong>Entidade:</strong> {{ contrato.entidade }}<br />
                   <strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}
                 </li>
-
               {% endfor %}
             </ul>
-            
+
             <div class="pagination">
               {% if page_obj.has_previous %}
                 <a href="?page={{ page_obj.previous_page_number }}&search={{ search }}">Anterior</a>

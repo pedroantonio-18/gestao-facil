@@ -51,7 +51,7 @@ class Vigencia(models.Model):
     vigencia_max = models.DateField(blank=True, null=True, verbose_name='Vigência Máxima')
 
     # Relações (chaves estrangeiras)
-    contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
+    contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
 
     # Calcula a vigência máxima a partir da vigência original para armazenar esse valor no banco de maneira persistente
     @property
@@ -93,14 +93,14 @@ class Contato(models.Model):
     # Relações (chaves estrangeiras)
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
 
-class Telefone_Contato(models.Model):
+class TelefoneContato(models.Model):
     # Telefone do Contato
     telefone = models.CharField(max_length=20, blank=True, null=True, verbose_name='Telefone')
 
     # Relações (chaves estrangeiras)
     contato = models.ForeignKey(Contato, on_delete=models.CASCADE)
 
-class Email_Contato(models.Model):
+class EmailContato(models.Model):
     # Email do contato
     email = models.EmailField(blank=True, null=True, verbose_name='Email')
 
@@ -114,7 +114,7 @@ class Gestor(models.Model):
     receber_emails = models.BooleanField(verbose_name='Deseja receber e-mails?', default=True)
 
     # Relações (chaves estrangeiras)
-    contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
+    contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
 
 class Links(models.Model):
     # Links
@@ -122,7 +122,7 @@ class Links(models.Model):
     link_convencao_coletiva_sei = models.URLField(blank=True, null=True, verbose_name='Link Sei para Convenção Coletiva')
 
     # Relações (chaves estrangeiras)
-    contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
+    contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
 
 class Garantia(models.Model):
     # Dados da garantia
@@ -130,7 +130,7 @@ class Garantia(models.Model):
     valor_garantia = models.DecimalField(blank=True, null=True, max_digits=11, decimal_places=2, verbose_name='Valor da Garantia')
 
     # Relações (chaves estrangeiras)
-    contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE)
+    contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
 
 class Notificacao(models.Model):
     # Dados da notificação
@@ -150,8 +150,8 @@ class TokenGestorNotificacao(models.Model):
     validado = models.BooleanField(default=False)
 
     # Relações (chaves estrangeiras)
-    notificacao = models.ForeignKey(Notificacao, on_delete=models.CASCADE)
-    gestor = models.ForeignKey(Gestor, on_delete=models.CASCADE)
+    notificacao = models.OneToOneField(Notificacao, on_delete=models.CASCADE)
+    gestor = models.OneToOneField(Gestor, on_delete=models.CASCADE)
 
     @property
     def expirado(self):
@@ -170,8 +170,8 @@ class TokenContatoNotificacao(models.Model):
     validado = models.BooleanField(default=False)
 
     # Relações (chaves estrangeiras)
-    notificacao = models.ForeignKey(Notificacao, on_delete=models.CASCADE)
-    contato = models.ForeignKey(Contato, on_delete=models.CASCADE)
+    notificacao = models.OneToOneField(Notificacao, on_delete=models.CASCADE)
+    contato = models.OneToOneField(Contato, on_delete=models.CASCADE)
 
     @property
     def expirado(self):
