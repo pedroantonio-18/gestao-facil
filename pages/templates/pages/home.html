@@ -351,7 +351,7 @@
                     {{ form_dict.gestor_form.nome }}
                   </div>
                   {% for contato in contrato.contato_set.all %}
-                  <div class="contract-form-card contact-form">
+                  <div class="contract-form-card contact-form" data-contrato-id="{{ contrato.id }}">
                     <h5>Responsável: {{ contato.nome }}</h5>
                     <button
                       class="open-contact-info contract-form-button"
