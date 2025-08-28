@@ -87,356 +87,464 @@
       </nav>
     </header>
     <main class="content">
-        <div class="contracts">
-            <form class="form-input" method="get" action="">
-                <input class="search-contract" type="text" name="numero" value="{{ numero }}" placeholder="INFORME O NÚMERO DO CONTRATO">
-                <input class="search-contract" type="text" name="entidade" value="{{ entidade }}" placeholder="INFORME A ENTIDADE">
-                <input class="search-contract" type="text" name="documento" value="{{ documento }}" placeholder="INFORME O CNPJ/CPF">
-                <button class="search-btn" type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </form>
+      <div class="contracts">
+        <form action="" class="form-input" method="get">
+          <input
+            class="search-contract"
+            name="numero"
+            placeholder="INFORME O NÚMERO DO CONTRATO"
+            type="text"
+            value="{{ numero }}"
+          />
+          <input
+            class="search-contract"
+            name="entidade"
+            placeholder="INFORME A ENTIDADE"
+            type="text"
+            value="{{ entidade }}"
+          />
+          <input
+            class="search-contract"
+            name="documento"
+            placeholder="INFORME O CNPJ/CPF"
+            type="text"
+            value="{{ documento }}"
+          />
+          <button class="search-btn" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      </div>
+      {% if contratos_filtrados %}
+      <div class="container-contract-filtered">
+        <h2 class="search-result-title">Resultados da pesquisa</h2>
+        {% for contrato in contratos_filtrados %}
+        <div class="contract-card-filtered">
+          <h3>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h3>
+          <p class="width"><strong>Objeto:</strong> {{ contrato.objeto }}</p>
+          <p class="width"><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
+          <p class="width">
+            <strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado }}
+          </p>
+          <p><strong>Status:</strong> {{ contrato.get_status_display }}</p>
+          {% with contrato.vigencia_set.first as vigencia %}
+          {% if vigencia %}
+          <p class="width">
+            <strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}
+          </p>
+          <p><strong>Vigência Máxima:</strong> {{ vigencia.vigencia_max }}</p>
+          {% else %}
+          <p><em>Vigência não informada.</em></p>
+          {% endif %}
+          {% endwith %}
         </div>
-        
-        {% if contratos_filtrados %}
-            <div class="container-contract-filtered">
-                <h2 class="search-result-title">Resultados da pesquisa</h2>
-                {% for contrato in contratos_filtrados %}
-                    <div class="contract-card-filtered">
-                        <h3>{{ contrato.numero_contrato }} - {{ contrato.entidade }}</h3>
-                        <p class="width"><strong>Objeto:</strong> {{ contrato.objeto }}</p>
-                        <p class="width"><strong>CNPJ/CPF:</strong> {{ contrato.cnpj_cpf }}</p>
-                        <p class="width"><strong>Valor Atualizado:</strong> R$ {{ contrato.valor_atualizado }}</p>
-                        <p><strong>Status:</strong> {{ contrato.get_status_display }}</p>
-                        {% with contrato.vigencia_set.first as vigencia %}
-                            {% if vigencia %}
-                                <p class="width"><strong>Vigência Atual:</strong> {{ vigencia.vigencia_atual }}</p>
-                                <p><strong>Vigência Máxima:</strong> {{ vigencia.vigencia_max }}</p>
-                            {% else %}
-                                <p><em>Vigência não informada.</em></p>
-                            {% endif %}
-                        {% endwith %}
-                    </div>
-                {% empty %}
-                    <p>Nenhum contrato encontrado para esta busca.</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-        
-        <div class="contracts-title">
-            <h1>Histórico de Contratos</h1>
+        {% empty %}
+        <p>Nenhum contrato encontrado para esta busca.</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="contracts-title">
+        <h1>Histórico de Contratos</h1>
+      </div>
+      <div class="container-contract">
+        <div class="contract-labels">
+          <p><strong>Nº do Contrato</strong></p>
+          <p><strong>Contratada</strong></p>
+          <p><strong>Objeto</strong></p>
+          <p><strong>CPF/CNPJ</strong></p>
+          <p><strong>Gestor</strong></p>
+          <p><strong>Valor Atualizado</strong></p>
+          <p><strong>Status</strong></p>
+          <p><strong>Vigência Atual</strong></p>
+          <p><strong>Vigência Máxima</strong></p>
         </div>
-        
-        <div class="container-contract">
-            <div class="contract-labels">
-                <p><strong>Nº do Contrato</strong></p>
-                <p><strong>Contratada</strong></p>
-                <p><strong>Objeto</strong></p>
-                <p><strong>CPF/CNPJ</strong></p>
-                <p><strong>Gestor</strong></p>
-                <p><strong>Valor Atualizado</strong></p>
-                <p><strong>Status</strong></p>
-                <p><strong>Vigência Atual</strong></p>
-                <p><strong>Vigência Máxima</strong></p>
+        {% for contrato, form_dict in forms %}
+          <div class="contract-card" data-contrato-id="{{ contrato.id }}">
+          <p>{{ contrato.numero_contrato }}</p>
+          <p>{{ contrato.entidade }}</p>
+          <p>{{ contrato.objeto }}</p>
+          <p>{{ contrato.cnpj_cpf }}</p>
+          {% with contrato.gestor_set.first as gestor %}
+          <p>{{ gestor.nome }}</p>
+          {% endwith %}
+          <p>R$ {{ contrato.valor_atualizado }}</p>
+          <p>{{ contrato.get_status_display }}</p>
+          {% with contrato.vigencia_set.first as vigencia %}
+          {% if vigencia %}
+          <p>{{ vigencia.vigencia_atual }}</p>
+          <p>{{ vigencia.vigencia_max }}</p>
+          {% else %}
+          <p><em>Vigência não informada.</em></p>
+          {% endif %}
+          {% endwith %}
+          <span class="edit-icon" title="Editar Contrato">
+            <svg
+              class="lucide lucide-pencil-icon lucide-pencil"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+              ></path>
+              <path d="m15 5 4 4"></path>
+            </svg>
+          </span>
+          <div class="contract-edit">
+            <div class="contract-edit-top">
+              <h3>Editar Contrato</h3>
+              <button class="close-contract-edit">
+                <svg
+                  class="lucide lucide-x-icon lucide-x"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewbox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+              </button>
             </div>
-            
-            {% for contrato in page_obj %}
-                <div class="contract-card">
-                    <p>{{ contrato.numero_contrato }}</p>
-                    <p>{{ contrato.entidade }}</p>
-                    <p>{{ contrato.objeto }}</p>
-                    <p>{{ contrato.cnpj_cpf }}</p>
-                    
-                    {% with contrato.gestor_set.first as gestor %}
-                        <p>{{ gestor.nome }}</p>
-                    {% endwith %}
-                    
-                    <p>R$ {{ contrato.valor_atualizado}}</p>
-                    <p>{{ contrato.get_status_display }}</p>
-                    
-                    {% with contrato.vigencia_set.first as vigencia %}
-                        {% if vigencia %}
-                            <p>{{ vigencia.vigencia_atual }}</p>
-                            <p>{{ vigencia.vigencia_max }}</p>
-                        {% else %}
-                            <p><em>Vigência não informada.</em></p>
-                        {% endif %}
-                    {% endwith %}
-                    
-                    <span class="edit-icon" title="Editar Contrato">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil">
-                            <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
-                            <path d="m15 5 4 4"/>
-                        </svg>
+            <form class="contract-form" method="POST" data-contrato-id="{{ contrato.id }}" data-contato-id="{{ contato.id }}">
+              {% csrf_token %}
+              <input type="hidden" name="contrato_id" value="{{ contrato.id }}">
+              <div class="form-contract">
+                <h4>Contrato</h4>
+                <div class="form-grid">
+                  <div class="contract-form-card">
+                    <label for="numero_contrato">Nº do Contrato</label>
+                    <p id="numero_contrato" name="numero_contrato">
+                      {{ contrato.numero_contrato }}
+                    </p>
+                    <span class="cant-edit">
+                      <svg
+                        class="lucide lucide-circle-x-icon lucide-circle-x"
+                        fill="none"
+                        height="14"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.25"
+                        viewbox="0 0 24 24"
+                        width="14"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m15 9-6 6"></path>
+                        <path d="m9 9 6 6"></path>
+                      </svg>
+                      <p>Essa informação não pode ser modificada</p>
                     </span>
-                    
-                    <div class="contract-edit">
-                        <div class="contract-edit-top">
-                            <h3>Editar Contrato</h3>
-                            <button class="close-contract-edit">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
-                                    <path d="M18 6 6 18"/>
-                                    <path d="m6 6 12 12"/>
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        <form method="POST" class="contract-form">
-                            {% csrf_token %}
-                            
-                            <div class="form-contract">
-                                <h4>Contrato</h4>
-                                <div class="form-grid">
-                                    <div class="contract-form-card">
-                                        <label for="numero-contrato">Nº do Contrato</label>
-                                        <p id="numero-contrato" name="numero-contrato">{{ contrato.numero_contrato }}</p>
-                                        <span class="cant-edit">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
-                                                <circle cx="12" cy="12" r="10"/>
-                                                <path d="m15 9-6 6"/>
-                                                <path d="m9 9 6 6"/>
-                                            </svg>
-                                            <p>Essa informação não pode ser modificada</p>
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="processo-sei">Processo SEI</label>
-                                        <p id="numero-contrato" name="numero-contrato">{{ contrato.processo_sei }}</p>
-                                        <span class="cant-edit">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
-                                                <circle cx="12" cy="12" r="10"/>
-                                                <path d="m15 9-6 6"/>
-                                                <path d="m9 9 6 6"/>
-                                            </svg>
-                                            <p>Essa informação não pode ser modificada</p>
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="objeto">Objeto</label>
-                                        <input type="text" id="objeto" name="objeto" value="{{ contrato.objeto }}">
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="entidade">Contratada</label>
-                                        <input type="text" id="entidade" name="entidade" value="{{ contrato.entidade }}">
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="cpf_cnpj">CPF/CNPJ</label>
-                                        <input type="text" id="cpf_cnpj" name="cpf_cnpj" value="{{ contrato.cnpj_cpf }}">
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="observacoes">Observações</label>
-                                        <textarea id="observacoes" name="observacoes">{{ contrato.observacoes }}</textarea>
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="valor_atualizado">Valor Atualizado</label>
-                                        <input type="number" id="valor_atualizado" name="valor_atualizado" value="{{ contrato.valor_atualizado }}">
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="status">Status</label>
-                                        <select name="status" id="status">
-                                            <option value="{{ contrato.status }}">{{ contrato.get_status_display }}</option>
-                                            <option value="ativo">Ativo</option>
-                                            <option value="rescindido">Rescindido</option>
-                                            <option value="finalizado">Finalizado</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="vigencia_original">Vigência Original</label>
-                                        {% with contrato.vigencia_set.first as vigencia %}
-                                            {% if vigencia %}
-                                                <input type="date" id="vigencia_original" name="vigencia_original" value="{{ vigencia.vigencia_original|date:'Y-m-d' }}">
-                                            {% else %}
-                                                <p><em>Vigência não informada.</em></p>
-                                            {% endif %}
-                                        {% endwith %}
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="vigencia_atual">Vigência Atual</label>
-                                        {% with contrato.vigencia_set.first as vigencia %}
-                                            {% if vigencia %}
-                                                <input type="date" id="vigencia_atual" name="vigencia_atual" value="{{ vigencia.vigencia_atual|date:'Y-m-d' }}">
-                                            {% else %}
-                                                <p><em>Vigência não informada.</em></p>
-                                            {% endif %}
-                                        {% endwith %}
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="vigencia_max">Vigência Máxima</label>
-                                        <div>
-                                            <input type="date" name="vigencia_max" id="vigencia_max">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="link_planilhas_sei">Link Planilhas SEI</label>
-                                        <div>
-                                            <input type="text" name="link_planilhas_sei" id="link_planilhas_sei" value="{{ contrato.links_set.first.link_planilhas_sei }}">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="link_convencao_coletiva_sei">Link Convenção Coletiva</label>
-                                        <div>
-                                            <input type="text" name="link_convencao_coletiva_sei" id="link_convencao_coletiva_sei" value="{{ contrato.links_set.first.link_convencao_coletiva_sei }}">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="tipo_garantia">Tipo da Garantia</label>
-                                        <div>
-                                            <input type="text" name="tipo_garantia" id="tipo_garantia" value="{{ contrato.garantia_set.first.tipo_garantia }}">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="contract-form-card">
-                                        <label for="valor_garantia">Valor da Garantia</label>
-                                        <div>
-                                            <input type="text" name="valor_garantia" id="valor_garantia" value="{{ contrato.garantia_set.first.valor_garantia }}">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-management">
-                                <h4>Gerência</h4>
-                                <div class="form-grid">
-                                    <div class="contract-form-card">
-                                        <label for="nome">Gestor</label>
-                                        <div>
-                                            <input required type="text" name="nome" id="nome_gestor" value="{{ contrato.gestor_set.first.nome }}">
-                                        </div>
-                                    </div>
-                                    
-                                    {% for contato in contrato.contato_set.all %}
-                                        <div class="contract-form-card contact-form">
-                                            <h5>Responsável: {{ contato.nome }}</h5>
-                                            <button type="button" class="open-contact-info contract-form-button">Ver Mais Informações</button>
-                                            <div class="contact-info-overlay"></div>
-                                            <div class="contact-info-card">
-                                                <div class="contact-info-top">
-                                                    <h6>Dados do Contato</h6>
-                                                    <button class="close-contact-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
-                                                            <path d="M18 6 6 18"/>
-                                                            <path d="m6 6 12 12"/>
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                                
-                                                <div class="contact-info-name">
-                                                    <label for="nome">Nome do Contato</label>
-                                                    <input required type="text" id="nome_contato" name="nome" value="{{ contato.nome }}">
-                                                </div>
-                                                
-                                                <div class="contact-emails-wrapper">
-                                                    <div class="contact-info-emails">
-                                                        {% for email in contato.email_contato_set.all %}
-                                                            <label for="email">Email {{ forloop.counter }}</label>
-                                                            <input required type="email" id="email" name="email" value="{{ email.email }}">
-                                                        {% endfor %}
-                                                    </div>
-                                                    <button type="button" class="contact-info-button create-contact-email contract-form-button">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
-                                                            <path d="M5 12h14"/>
-                                                            <path d="M12 5v14"/>
-                                                        </svg>
-                                                        Adicionar Novo Email
-                                                    </button>
-                                                </div>
-                                                
-                                                <div class="contact-phones-wrapper">
-                                                    <div class="contact-info-phones">
-                                                        {% for telefone in contato.telefone_contato_set.all %}
-                                                            <label for="telefone">Telefone {{ forloop.counter }}</label>
-                                                            <input required type="tel" id="telefone" name="telefone" value="{{ telefone.telefone }}">
-                                                        {% endfor %}
-                                                    </div>
-                                                    <button type="button" class="contact-info-button create-contact-phone contract-form-button">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
-                                                            <path d="M5 12h14"/>
-                                                            <path d="M12 5v14"/>
-                                                        </svg>
-                                                        Adicionar Novo Telefone
-                                                    </button>
-                                                </div>
-                                                
-                                                <button type="button" class="save-contact-info contract-form-button">
-                                                    Salvar Alterações
-                                                </button>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                                
-                                <button class="create-contact contract-form-button">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
-                                        <path d="M5 12h14"/>
-                                        <path d="M12 5v14"/>
-                                    </svg>
-                                    Adicionar Novo Responsável
-                                </button>
-                            </div>
-                            
-                            <div class="form-action-buttons">
-                                <button class="cancel-changes">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
-                                        <path d="M18 6 6 18"/>
-                                        <path d="m6 6 12 12"/>
-                                    </svg>
-                                    Cancelar
-                                </button>
-                                
-                                <button class="save-contract" type="submit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
-                                        <path d="M20 6 9 17l-5-5"/>
-                                    </svg>
-                                    Salvar Alterações
-                                </button>
-                            </div>
-                        </form>
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="processo_sei">Processo SEI</label>
+                    <p id="processo_sei" name="processo_sei">
+                      {{ contrato.processo_sei }}
+                    </p>
+                    <span class="cant-edit">
+                      <svg
+                        class="lucide lucide-circle-x-icon lucide-circle-x"
+                        fill="none"
+                        height="14"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.25"
+                        viewbox="0 0 24 24"
+                        width="14"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m15 9-6 6"></path>
+                        <path d="m9 9 6 6"></path>
+                      </svg>
+                      <p>Essa informação não pode ser modificada</p>
+                    </span>
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="objeto">Objeto</label>
+                    {{ form_dict.contrato_form.objeto }}
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="entidade">Contratada</label>
+                    {{ form_dict.contrato_form.entidade }}
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="cnpj_cpf">CPF/CNPJ</label>
+                    {{ form_dict.contrato_form.cnpj_cpf }}
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="observacoes">Observações</label>
+                    {{ form_dict.contrato_form.observacoes }}
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="valor_atualizado">Valor Atualizado</label>
+                    {{ form_dict.contrato_form.valor_atualizado }}
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="status">Status</label>
+                    {{ form_dict.contrato_form.status }}
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="vigencia_original">Vigência Original</label>
+                    {% with contrato.vigencia_set.first as vigencia %}
+                      {{ form_dict.vigencia_form.vigencia_original }}
+                    {% endwith %}
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="vigencia_atual">Vigência Atual</label>
+                    {% with contrato.vigencia_set.first as vigencia %}
+                      {{ form_dict.vigencia_form.vigencia_atual }}
+                    {% endwith %}
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="vigencia_max">Vigência Máxima</label>
+                    <div>
+                      {{ form_dict.vigencia_form.vigencia_max }}
                     </div>
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="link_planilhas_sei">Link Planilhas SEI</label>
+                    <div>
+                      {{ form_dict.links_form.link_planilhas_sei }}
+                    </div>
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="link_convencao_coletiva_sei"
+                      >Link Convenção Coletiva</label
+                    >
+                    <div>
+                      {{ form_dict.links_form.link_convencao_coletiva_sei }}
+                    </div>
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="tipo_garantia">Tipo da Garantia</label>
+                    <div>
+                      {{ form_dict.garantia_form.tipo_garantia }}
+                    </div>
+                  </div>
+                  <div class="contract-form-card">
+                    <label for="valor_garantia">Valor da Garantia</label>
+                    <div>
+                      {{ form_dict.garantia_form.valor_garantia }}
+                    </div>
+                  </div>
                 </div>
-            {% empty %}
-                <p>Nenhum contrato encontrado.</p>
-            {% endfor %}
-        </div>
-        
-        <div class="pagination">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">
-                    <i class="fa-solid fa-angle-double-left"></i>
-                </a>
-                <a href="?page={{ page_obj.previous_page_number }}">
-                    <i class="fa-solid fa-angle-left"></i>
-                </a>
-            {% endif %}
-            
-            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} :</span>
-            
-            <form method="get" id="pageForm">
-                <label for="page_input"></label>
-                <input type="number" id="page_input" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" value="{{ page_obj.number }}">
+              </div>
+              <div class="form-management">
+                <h4>Gerência</h4>
+                <div class="form-grid">
+                  <div class="contract-form-card">
+                    <label for="{{ form_dict.gestor_form.nome.id_for_label }}">Gestor</label>
+                    {{ form_dict.gestor_form.nome }}
+                  </div>
+                  {% for contato in contrato.contato_set.all %}
+                  <div class="contract-form-card contact-form">
+                    <h5>Responsável: {{ contato.nome }}</h5>
+                    <button
+                      class="open-contact-info contract-form-button"
+                      type="button"
+                    >
+                      Ver Mais Informações
+                    </button>
+                    <div class="contact-info-overlay"></div>
+                    <div class="contact-info-card">
+                      <div class="contact-info-top">
+                        <h6>Dados do Contato</h6>
+                        <button class="close-contact-info">
+                          <svg
+                            class="lucide lucide-x-icon lucide-x"
+                            fill="none"
+                            height="18"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            viewbox="0 0 24 24"
+                            width="18"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M18 6 6 18"></path>
+                            <path d="m6 6 12 12"></path>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="contact-info-name">
+                        <label for="contato_nome_{{ contrato.id }}_{{ contato.id }}">Nome do Contato</label>
+                        <input type="text" name="contato_nome_{{ contrato.id }}_{{ contato.id }}" id="contato_nome_{{ contrato.id }}_{{ contato.id }}" value="{{ contato.nome }}" class="form-control" required>
+                      </div>
+                      <div class="contact-emails-wrapper">
+                        <div class="contact-info-emails">
+                          {% for email in contato.emailcontato_set.all %}
+                          <label for="email_contato_{{ contrato.id }}_{{ contato.id }}_{{ forloop.counter0 }}">Email {{ forloop.counter }}</label>
+                          <input type="email" name="email_contato_{{ contrato.id }}_{{ contato.id }}_{{ forloop.counter0 }}" id="email_contato_{{ contrato.id }}_{{ contato.id }}_{{ forloop.counter0 }}" value="{{ email.email }}" class="form-control" required>
+                          {% endfor %}
+                        </div>
+                        <button
+                          class="contact-info-button create-contact-email contract-form-button"
+                          type="button"
+                        >
+                          <svg
+                            class="lucide lucide-plus-icon lucide-plus"
+                            fill="none"
+                            height="16"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2.5"
+                            viewbox="0 0 24 24"
+                            width="16"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M5 12h14"></path>
+                            <path d="M12 5v14"></path>
+                          </svg>
+                          Adicionar Novo Email
+                        </button>
+                      </div>
+                      <div class="contact-phones-wrapper">
+                        <div class="contact-info-phones">
+                          {% for telefone in contato.telefonecontato_set.all %}
+                          <label for="telefone_contato_{{ contrato.id }}_{{ contato.id }}_{{ forloop.counter0 }}">Telefone {{ forloop.counter }}</label>
+                          <input type="tel" name="telefone_contato_{{ contrato.id }}_{{ contato.id }}_{{ forloop.counter0 }}" id="telefone_contato_{{ contrato.id }}_{{ contato.id }}_{{ forloop.counter0 }}" value="{{ telefone.telefone }}" class="form-control" required>
+                          {% endfor %}
+                        </div>
+                        <button
+                          class="contact-info-button create-contact-phone contract-form-button"
+                          type="button"
+                        >
+                          <svg
+                            class="lucide lucide-plus-icon lucide-plus"
+                            fill="none"
+                            height="16"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2.5"
+                            viewbox="0 0 24 24"
+                            width="16"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M5 12h14"></path>
+                            <path d="M12 5v14"></path>
+                          </svg>
+                          Adicionar Novo Telefone
+                        </button>
+                      </div>
+                      <button
+                        class="save-contact-info contract-form-button"
+                        type="button"
+                      >
+                        Salvar Alterações
+                      </button>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                <button class="create-contact contract-form-button">
+                  <svg
+                    class="lucide lucide-plus-icon lucide-plus"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    viewbox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5v14"></path>
+                  </svg>
+                  Adicionar Novo Responsável
+                </button>
+              </div>
+              <div class="form-action-buttons">
+                <button class="cancel-changes">
+                  <svg
+                    class="lucide lucide-x-icon lucide-x"
+                    fill="none"
+                    height="20"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    viewbox="0 0 24 24"
+                    width="20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                  </svg>
+                  Cancelar
+                </button>
+                <button class="save-contract" type="submit">
+                  <svg
+                    class="lucide lucide-check-icon lucide-check"
+                    fill="none"
+                    height="20"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    viewbox="0 0 24 24"
+                    width="20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                  Salvar Alterações
+                </button>
+              </div>
             </form>
-            
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">
-                    <i class="fa-solid fa-angle-right"></i>
-                </a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">
-                    <i class="fa-solid fa-angle-double-right"></i>
-                </a>
-            {% endif %}
+          </div>
         </div>
+        {% empty %}
+        <p>Nenhum contrato encontrado.</p>
+        {% endfor %}
+      </div>
+    </form>
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1"><i class="fa-solid fa-angle-double-left"></i></a>
+        <a href="?page={{ page_obj.previous_page_number }}"
+          ><i class="fa-solid fa-angle-left"></i
+        ></a>
+        {% endif %}
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} :</span>
+        <form id="pageForm" method="get">
+          <label for="page_input"></label>
+          <input
+            id="page_input"
+            max="{{ page_obj.paginator.num_pages }}"
+            min="1"
+            name="page"
+            type="number"
+            value="{{ page_obj.number }}"
+          />
+        </form>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+          ><i class="fa-solid fa-angle-right"></i
+        ></a>
+        <a href="?page={{ page_obj.paginator.num_pages }}"
+          ><i class="fa-solid fa-angle-double-right"></i
+        ></a>
+        {% endif %}
+      </div>
     </main>
     <script src="{% static 'js/scripts.js' %}" type="module"></script>
     {% if debug %}
