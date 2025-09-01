@@ -1,4 +1,4 @@
-from contratos.models import Contrato, Vigencia, Garantia, Gestor, Contato, Telefone_Contato, Email_Contato, Links
+from contratos.models import Contrato, Vigencia, Garantia, Gestor, Contato, TelefoneContato, EmailContato, Links
 import openpyxl
 from datetime import datetime
 from pathlib import Path
@@ -200,12 +200,12 @@ def importar_contratos(caminho_arquivo):
             )
 
             if telefone1:
-                Telefone_Contato.objects.create(contato=contato, telefone=telefone1)
+                TelefoneContato.objects.create(contato=contato, telefone=telefone1)
             if telefone2:
-                Telefone_Contato.objects.create(contato=contato, telefone=telefone2)
+                TelefoneContato.objects.create(contato=contato, telefone=telefone2)
 
             if email:
-                Email_Contato.objects.create(contato=contato, email=None)
+                EmailContato.objects.create(contato=contato, email=None)
 
             Links.objects.create(
                 contrato=contrato,
