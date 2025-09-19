@@ -28,12 +28,7 @@
         <div>
           <ul class="services-list">
             <li class="upload-container">
-              <form action="/upload" enctype="multipart/form-data" method="post">
-                <label class="upload-label" for="arquivo"
-                  >REGISTRE SEU CONTRATO</label
-                >
-                <input id="arquivo" name="arquivo" type="file" />
-              </form>
+              <a class="upload-label" href="{% url 'contract_page' %}">REGISTRE SEU CONTRATO</a>
             </li>
             <span>|</span>
             <li class="services-item">
@@ -547,6 +542,7 @@
       </div>
     </main>
     <script src="{% static 'js/scripts.js' %}" type="module"></script>
+    
     {% if debug %}
     <script src="http://localhost:8000/static/django_browser_reload/reload.js"></script>
     {% endif %}

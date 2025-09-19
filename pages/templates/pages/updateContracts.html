@@ -14,7 +14,7 @@
       type="image/png"
     />
     <link rel="stylesheet" href="{% static 'css/global.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/updateContracts-styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/updateContracts.css' %}" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -32,16 +32,49 @@
         <div>
           <ul class="services-list">
             <li>
-              <form action="/upload" method="post" enctype="multipart/form-data">
-                <label for="arquivo" class="upload-label">REGISTRE SEU CONTRATO</label>
-                <input type="file" id="arquivo" name="arquivo" />
-              </form>
+              <a class="upload-label" href="{% url 'contract_page' %}">REGISTRE SEU CONTRATO</a>
             </li>
             <span>|</span>
             <li class="services-item active">Atualizar Contratos</li>
             <span>|</span>
             <li class="services-item notification">Notificações</li>
           </ul>
+            <div class="modal-container">
+            <h3>Notificações</h3>
+            <div class="modal-itens">
+              <p><strong>Contratos a vencer:</strong></p>
+              <ul class="notifications">
+                {% for contrato in contratos_a_vencer %}
+                <li>
+                  <a
+                    href="{% url 'update_contracts' %}?search={{ contrato.numero_contrato }}"
+                  >
+                    {{ contrato.numero_contrato }} - {{ contrato.entidade }}
+                    (vence em {{ contrato.vigencia_set.first.vigencia_atual }})
+                  </a>
+                </li>
+                {% empty %}
+                <li>Nenhum contrato prestes a vencer.</li>
+                {% endfor %}
+              </ul>
+              <p><strong>Contratos vencidos:</strong></p>
+              <ul class="notifications">
+                {% for contrato in contratos_vencidos %}
+                <li>
+                  <a
+                    href="{% url 'update_contracts' %}?search={{ contrato.numero_contrato }}"
+                  >
+                    {{ contrato.numero_contrato }} - {{ contrato.entidade }}
+                    (venceu em {{ contrato.vigencia_set.first.vigencia_atual }})
+                  </a>
+                </li>
+                {% empty %}
+                <li>Nenhum contrato vencido.</li>
+                {% endfor %}
+              </ul>
+            </div>
+            <button class="close-modal">Fechar</button>
+          </div>
 
           <div class="modal-container">
             <h3>Notificações</h3>
@@ -67,161 +100,138 @@
         <a class="go-home" href="{% url 'home' %}">Voltar para a Home</a>
       </div>
 
-      <section class="container-list">
-        <div class="edit-contracts">
-          <div class="contract-edit-top">
-            <h2>Editar Contratos</h2>
-          </div>
+       <form method="post" action="{% url 'update_contracts' %}" id="formEditarContrato">
+        {% csrf_token %}
+        <input type="hidden" id="contrato_id" name="contrato_id">
+        <input type="hidden" id="responsaveis_json" name="responsaveis_json">
 
-          <form method="POST" class="contract-form">
-            {% csrf_token %}
+        <section class="container-editions">
+          <div class="edit-contracts">
 
-            <div class="form-contract">
-              <h4>Contrato</h4>
-              <div class="form-grid">
-                <div class="contract-form-card">
-                  <label for="numero-contrato">Nº do Contrato</label>
-                  <p id="numero-contrato" name="numero-contrato">{{ contrato.numero_contrato }}</p>
-                  <span class="cant-edit">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.25"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-x-icon lucide-circle-x"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="m15 9-6 6" />
-                      <path d="m9 9 6 6" />
-                    </svg>
-                    <p>Essa informação não pode ser modificada</p>
+            <div class="container-actions">
+              <h3>Contrato</h3>
+              <div class="edit-actions">
+                <div class="edit-action-card">
+                  <label for="numero_contrato">N° do contrato</label>
+                  <input type="text" id="numero_contrato" name="numero_contrato" readonly>
+                  <span class="icon-info">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                    <p>Essa informação não pode ser alterada</p>
                   </span>
                 </div>
 
-                <div class="contract-form-card">
-                  <label for="processo-sei">Processo SEI</label>
-                  <p id="numero-contrato" name="numero-contrato">{{ contrato.processo_sei }}</p>
-                  <span class="cant-edit">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.25"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-x-icon lucide-circle-x"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="m15 9-6 6" />
-                      <path d="m9 9 6 6" />
-                    </svg>
-                    <p>Essa informação não pode ser modificada</p>
+                <div class="edit-action-card">
+                  <label for="processo_sei">Processo SEI</label>
+                  <input type="text" id="processo_sei" name="processo_sei" readonly>
+                  <span class="icon-info">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                    <p>Essa informação não pode ser alterada</p>
                   </span>
                 </div>
 
-                <div class="contract-form-card">
+                <div class="edit-action-card">
                   <label for="objeto">Objeto</label>
-                  <input type="text" id="objeto" name="objeto" value="{{ contrato.objeto }}" />
+                  <textarea id="objeto" name="objeto"></textarea>
                 </div>
 
-                <div class="contract-form-card">
-                  <label for="entidade">Contratada</label>
-                  <input type="text" id="entidade" name="entidade" value="{{ contrato.entidade }}" />
+                <div class="edit-action-card">
+                  <label for="contratada">Contratada</label>
+                  <input type="text" id="contratada" name="entidade">
                 </div>
 
-                <div class="contract-form-card">
-                  <label for="cpf_cnpj">CPF/CNPJ</label>
-                  <input type="text" id="cpf_cnpj" name="cpf_cnpj" value="{{ contrato.cnpj_cpf }}" />
+                <div class="edit-action-card">
+                  <label for="cnpj_cpf">CNPJ/CPF</label>
+                  <input type="text" id="cnpj_cpf" name="cnpj_cpf">
                 </div>
 
-                <div class="contract-form-card">
+                <div class="edit-action-card">
                   <label for="observacoes">Observações</label>
-                  <textarea id="observacoes" name="observacoes">{{ contrato.observacoes }}</textarea>
+                  <textarea id="observacoes" name="observacoes"></textarea>
                 </div>
 
-                <div class="contract-form-card">
+                <div class="edit-action-card">
                   <label for="valor_atualizado">Valor Atualizado</label>
-                  <input type="number" id="valor_atualizado" name="valor_atualizado" value="{{ contrato.valor_atualizado }}" />
+                  <input type="text" id="valor_atualizado" name="valor_atualizado">
                 </div>
 
-                <div class="contract-form-card">
+                <div class="edit-action-card">
                   <label for="status">Status</label>
-                  <select name="status" id="status">
-                    <option value="{{ contrato.status }}">{{ contrato.get_status_display }}</option>
+                  <select id="status" name="status">
                     <option value="ativo">Ativo</option>
-                    <option value="rescindido">Rescindido</option>
-                    <option value="finalizado">Finalizado</option>
+                    <option value="inativo">Inativo</option>
+                    <option value="reincidiu">Reincidiu</option>
                   </select>
                 </div>
 
-                <div class="contract-form-card">
+                <div class="edit-action-card">
                   <label for="vigencia_original">Vigência Original</label>
-                  {% with contrato.vigencia_set.first as vigencia %}
-                    {% if vigencia %}
-                      <input type="date" id="vigencia_original" name="vigencia_original" value="{{ vigencia.vigencia_original|date:'Y-m-d' }}" />
-                    {% else %}
-                      <p><em>Vigência não informada.</em></p>
-                    {% endif %}
-                  {% endwith %}
+                  <input type="date" id="vigencia_original" name="vigencia_original">
                 </div>
 
-                <div class="contract-form-card">
+                <div class="edit-action-card">
                   <label for="vigencia_atual">Vigência Atual</label>
-                  {% with contrato.vigencia_set.first as vigencia %}
-                    {% if vigencia %}
-                      <input type="date" id="vigencia_atual" name="vigencia_atual" value="{{ vigencia.vigencia_atual|date:'Y-m-d' }}" />
-                    {% else %}
-                      <p><em>Vigência não informada.</em></p>
-                    {% endif %}
-                  {% endwith %}
+                  <input type="date" id="vigencia_atual" name="vigencia_atual">
                 </div>
 
-                <div class="contract-form-card">
-                  <label for="vigencia_max">Vigência Máxima</label>
-                  <div>
-                    <input type="date" name="vigencia_max" id="vigencia_max" />
-                  </div>
+                <div class="edit-action-card">
+                  <label for="vigencia_maxima">Vigência Máxima</label>
+                  <input type="date" id="vigencia_maxima" name="vigencia_max">
                 </div>
 
-                <div class="contract-form-card">
+                <div class="edit-action-card">
                   <label for="link_planilhas_sei">Link Planilhas SEI</label>
-                  <div>
-                    <input type="text" name="link_planilhas_sei" id="link_planilhas_sei" value="{{ contrato.links_set.first.link_planilhas_sei }}" />
-                  </div>
+                  <input type="text" id="link_planilhas_sei" name="link_planilhas_sei">
                 </div>
 
-                <div class="contract-form-card">
-                  <label for="link_convencao_coletiva_sei">Link Convenção Coletiva</label>
-                  <div>
-                    <input type="text" name="link_convencao_coletiva_sei" id="link_convencao_coletiva_sei" value="{{ contrato.links_set.first.link_convencao_coletiva_sei }}" />
-                  </div>
+                <div class="edit-action-card">
+                  <label for="link_convencao_coletiva">Link Convenção Coletiva</label>
+                  <input type="text" id="link_convencao_coletiva" name="link_convencao_coletiva_sei">
                 </div>
 
-                <div class="contract-form-card">
+                <div class="edit-action-card">
                   <label for="tipo_garantia">Tipo da Garantia</label>
-                  <div>
-                    <input type="text" name="tipo_garantia" id="tipo_garantia" value="{{ contrato.garantia_set.first.tipo_garantia }}" />
-                  </div>
+                  <input type="text" id="tipo_garantia" name="tipo_garantia">
                 </div>
-
-                <div class="contract-form-card">
+                
+                <div class="edit-action-card">
                   <label for="valor_garantia">Valor da Garantia</label>
-                  <div>
-                    <input type="text" name="valor_garantia" id="valor_garantia" value="{{ contrato.garantia_set.first.valor_garantia }}" />
-                  </div>
+                  <input type="text" id="valor_garantia" name="valor_garantia">
                 </div>
               </div>
             </div>
-          </form>
-        </div>
+            <div class="container-managemente">
+              <h3>Gerência</h3>
+              <div class="management">
+                <div class="management-card">
+                  <label for="observacoes">Gestor</label>
+                  <input id="Gestor" name="nome">
+                </div>
+                
+              </div>
+
+              <button type="button" class="add-manager">
+                <i class="fas fa-plus"></i>
+                <p>Adicionar Novo Responsavel</p>
+              </button>
+
+            </div>
+
+            <div class="action-changes">
+              <button type="button" class="delete-contracts">
+                <i class="fa fa-trash"></i>
+                <p>DELETAR CONTRATO</p>
+              </button>
+              <button type="button" class="cancel-changes">
+                <i class="fas fa-times"></i>
+                <p>Cancelar</p>
+              </button>
+              <button type="submit" class="save-changes">
+                <i class="fa fa-check"></i>
+                <p>Salvar Alterações</p>
+              </button>
+            </div>
+          </div>
+        </form>
 
         <div class="contracts-list">
           <div class="field-search">
@@ -241,16 +251,34 @@
             <ul class="contracts-ul">
               {% for contrato in page_obj %}
                 <li
-                  class="contract-item"
+                  class="contract-item" data-id="{{ contrato.id }}"
                   data-numero="{{ contrato.numero_contrato }}"
+                  data-processo-sei="{{ contrato.processo_sei }}"
                   data-entidade="{{ contrato.entidade }}"
                   data-cnpj="{{ contrato.cnpj_cpf }}"
                   data-objeto="{{ contrato.objeto|escapejs }}"
-                  data-gestor="{{ contrato.gestor }}"
+                  data-observacoes="{{ contrato.observacoes|escapejs }}"
+                  data-gestor="{{ contrato.gestor.nome }}"
                   data-valor="{{ contrato.valor_atualizado }}"
                   data-status="{{ contrato.status }}"
+                  data-vigencia-original="{{ contrato.vigencia_original|date:'Y-m-d' }}"
                   data-vigencia-atual="{{ contrato.vigencia_atual|date:'Y-m-d' }}"
                   data-vigencia-maxima="{{ contrato.vigencia_maxima|date:'Y-m-d' }}"
+                  data-link-planilha="{{ contrato.links.link_planilhas_sei }}"
+                  data-link-convencao="{{ contrato.links.link_convencao_coletiva_sei }}"
+                  data-tipo-garantia="{{ contrato.garantia.tipo_garantia }}"
+                  data-valor-garantia="{{ contrato.garantia.valor_garantia }}"
+                  
+                  data-responsaveis='[
+                    {% for contato in contrato.contato_set.all %}
+                        {
+                            "nome": "{{ contato.nome|escapejs }}",
+                            "emails": [{% for e in contato.emailcontato_set.all %}"{{ e.email }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+                            "telefones": [{% for t in contato.telefonecontato_set.all %}"{{ t.telefone }}"{% if not forloop.last %}, {% endif %}{% endfor %}]
+                        }
+                        {% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                  ]'
                 >
                   <strong>Contrato nº:</strong> {{ contrato.numero_contrato }}<br />
                   <strong>Entidade:</strong> {{ contrato.entidade }}<br />
@@ -273,6 +301,79 @@
           {% endif %}
         </div>
       </section>
+
+      <div id="modalNovoResponsavel" class="modal">
+          <div class="modal-content">
+              <div class="top-modal-responsavel">
+                  <h2 class="data-contracts-title">Dados do Novo Contato</h2>
+                  <i class="fa fa-times close"></i>
+              </div>
+              <form id="formNovoResponsavel">
+                  <div class="form-group">
+                      <label for="nomeContato">Nome do Contato</label>
+                      <input type="text" id="nomeContato" name="nomeContato" required>
+                  </div>
+                  <div class="emails">
+                      <label>Emails</label>
+                      <div class="email-input">
+                          <input type="email" name="email[]" placeholder="Email 1" required>
+                          <button type="button" class="add-email">
+                              <i class="fas fa-plus"></i>
+                              Adicionar Novo E-mail
+                          </button>
+                      </div>
+                  </div>
+                  <div class="telefones">
+                      <label>Telefones</label>
+                      <div class="telefone-input">
+                          <input type="tel" name="telefone[]" placeholder="Telefone 1" required>
+                          <button type="button" class="add-telefone">
+                              <i class="fas fa-plus"></i>
+                              Adicionar Novo Telefone
+                          </button>
+                      </div>
+                  </div>
+                  <button class="submit" type="submit">Salvar Alterações</button>
+              </form>
+          </div>
+      </div>
+
+      <div id="modalDetalhesResponsavel" class="modal">
+          <div class="modal-content">
+              <div class="top-modal-responsavel">
+                  <h2>Dados do Contato</h2>
+                  <i class="fa fa-times close"></i>
+              </div>
+              <form id="formDetalhesResponsavel">
+                  <div class="form-group">
+                      <label for="detalhes-nome-input"><strong>Nome:</strong></label>
+                      <input type="text" id="detalhes-nome-input" class="editable-input" required>
+                  </div>
+                  <div class="form-group">
+                      <label><strong>Emails:</strong></label>
+                      <div id="detalhes-emails" class="emails-container"></div>
+                      <button type="button" class="add-email-detalhes">
+                          <i class="fas fa-plus"></i> Adicionar Novo Email
+                      </button>
+                  </div>
+                  <div class="form-group">
+                      <label><strong>Telefones:</strong></label>
+                      <div id="detalhes-telefones" class="telefones-container"></div>
+                      <button type="button" class="add-telefone-detalhes">
+                          <i class="fas fa-plus"></i> Adicionar Novo Telefone
+                      </button>
+                  </div>
+                  <div class="action-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
+                      <button type="button" class="cancelar-detalhes">
+                          Cancelar
+                      </button>
+                      <button type="submit" class="salvar-detalhes">
+                          Salvar Alterações
+                      </button>
+                  </div>
+              </form>
+          </div>
+      </div>
     </main>
 
     <footer class="footer-info">

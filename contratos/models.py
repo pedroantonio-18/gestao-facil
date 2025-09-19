@@ -13,7 +13,8 @@ class Contrato(models.Model):
     entidade = models.CharField(max_length=255)
     cnpj_cpf = models.CharField(max_length=30, verbose_name='CNPJ/CPF')
     observacoes = models.TextField(blank=True, null=True, verbose_name='Observações sobre o Contrato')
-    valor_atualizado = models.DecimalField(max_digits=11, decimal_places=2, verbose_name='Valor Atualizado do Contrato')
+    # CORREÇÃO: Adicionado null=True e blank=True para tornar o campo opcional.
+    valor_atualizado = models.DecimalField(max_digits=11, decimal_places=2, verbose_name='Valor Atualizado do Contrato', null=True, blank=True)
     proximo_ao_vencimento = models.BooleanField(default=False, verbose_name='Contrato Está Próximo de Vencer')
     
     STATUS_CHOICES = [
@@ -82,7 +83,8 @@ class Vigencia(models.Model):
         return (self.vigencia_atual - self.vigencia_original).days >= 5 * 365
     
     def __str__(self):
-        return f'Contrato: {self.numero_contrato} ({self.entidade})'
+        # Corrigido para usar self.contrato, já que o modelo Vigencia não tem numero_contrato diretamente
+        return f'Vigência do Contrato: {self.contrato.numero_contrato}'
     
 
 class Contato(models.Model):
@@ -182,3 +184,4 @@ class TokenContatoNotificacao(models.Model):
         self.expira_em = self.expira_em + timedelta(days=7)
         self.validado = False
         self.save()
+

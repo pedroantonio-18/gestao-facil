@@ -9,7 +9,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Adicione hosts locais
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'penalidades',
     'pagamentos',
     'pages.apps.PagesConfig',
+    "django_browser_reload",
 ]
 
 MIDDLEWARE = [
@@ -36,6 +37,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -57,14 +59,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# Configuração do Banco de Dados
+db_url = config('DATABASE_URL')
+
+pattern = r'postgres(?:ql)?://(?P<user>[^:]+):(?P<password>[^@]+)@(?P<host>[^:/]+)(?::(?P<port>\d+))?/(?P<name>[^\?]+)(?:\?sslmode=(?P<sslmode>\w+))?'
+match = re.match(pattern, db_url)
+
+if not match:
+    raise ValueError("DATABASE_URL inválida")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', default='5432'),
+        'NAME': match.group('name'),
+        'USER': match.group('user'),
+        'PASSWORD': match.group('password'),
+        'HOST': match.group('host'),
+        'PORT': match.group('port') or '5432',
+        'OPTIONS': {
+            'sslmode': match.group('sslmode') or 'require',
+        },
     }
 }
 
@@ -128,4 +142,4 @@ TEAMS_WEBHOOK = config('TEAMS_WEBHOOK')
 
 # Adicione também para media files se necessário
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR/'media'

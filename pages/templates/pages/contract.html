@@ -1,0 +1,134 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link
+      href="{% static 'assets/favicon.png' %}"
+      rel="icon"
+      type="image/png"
+    />
+
+    <link href="{% static 'css/global.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/contract.css' %}" rel="stylesheet" />
+
+    <title>Gestao Facil</title>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav-bar">
+        <h1 class="nav-title">Registro de Contratos</h1>
+        <a class="go-home" href="{% url 'home' %}">Voltar para Home</a>
+      </nav>
+    </header>
+
+    <main class="content">
+      <section class="container-form">
+        <form class="form-contracts">
+          <h3 class="form-title">PREENCHA OS DADOS DO NOVO CONTRATO</h3>
+
+          <div class="form-grid">
+              <div class="edit-action-card">
+                <label for="numero_contrato">Informe o N° do contrato</label>
+                <input type="text" id="numero_contrato" name="numero_contrato" readonly>
+              </div>
+
+              <div class="edit-action-card">
+                <label for="processo_sei">Informe o N° do Processo SEI</label>
+                <input type="text" id="processo_sei" name="processo_sei" readonly>
+              </div>
+
+              <div class="edit-action-card">
+                <label for="objeto">Informe uma descrição do Objeto</label>
+                <textarea id="objeto" name="objeto"></textarea>
+              </div>
+
+              <div class="edit-action-card">
+                <label for="contratada">Informe a Contratada</label>
+                <input type="text" id="contratada" name="contratada">
+              </div>
+
+              <div class="edit-action-card">
+                <label for="cnpj_cpf">Informe o CNPJ/CPF</label>
+                <input type="text" id="cnpj_cpf" name="cnpj_cpf">
+              </div>
+
+              <div class="edit-action-card">
+                <label for="observacoes">Informe as Observações</label>
+                <textarea id="observacoes" name="observacoes"></textarea>
+              </div>
+
+              <div class="edit-action-card">
+                <label for="valor_atualizado">Informe o Valor Atualizado</label>
+                <input type="text" id="valor_atualizado" name="valor_atualizado">
+              </div>
+
+              <div class="edit-action-card">
+                <label for="status">Informe o Status</label>
+                <select id="status" name="status">
+                  <option value="ativo">Ativo</option>
+                  <option value="inativo">Inativo</option>
+                  <option value="reincidiu">Reincidiu</option>
+                </select>
+              </div>
+
+              <div class="edit-action-card">
+                <label for="vigencia_original">Informe a Vigência</label>
+                <input type="date" id="vigencia_original" name="vigencia_original">
+              </div>
+
+              <div class="edit-action-card">
+                <label for="vigencia_maxima">Informe a Vigência Máxima</label>
+                <input type="date" id="vigencia_maxima" name="vigencia_maxima">
+              </div>
+
+              <div class="edit-action-card">
+                <label for="link_planilhas_sei">Informe o Link da Planilha SEI</label>
+                <input type="text" id="link_planilhas_sei" name="link_planilhas_sei">
+              </div>
+
+              <div class="edit-action-card">
+                <label for="link_convencao_coletiva">Informe o Link Convenção Coletiva</label>
+                <input type="text" id="link_convencao_coletiva" name="link_convencao_coletiva">
+              </div>
+
+              <div class="edit-action-card">
+                <label for="tipo_garantia">Informe oTipo da Garantia</label>
+                <input type="text" id="tipo_garantia" name="tipo_garantia">
+              </div>
+              
+              <div class="edit-action-card">
+                <label for="valor_garantia">Informe o Valor da Garantia</label>
+                <input type="text" id="valor_garantia" name="valor_garantia">
+              </div>
+
+              <div class="edit-action-card">
+                <label for="observacoes">Informe o Gestor</label>
+                <input id="Gestor" name="Gestor">
+              </div>
+
+              <div class="edit-action-card plus-info">
+                <label for="observacoes">Informe um Responsavel</label>
+                <input id="Gestor" name="Gestor">
+                <label for="observacoes">Informe o E-mail do responsavel</label>
+                <input id="E-mail" name="E-mail">
+                <label for="observacoes">Informe o Telefone do responsavel</label>
+                <input id="Telefone" name="Telefone">
+              </div>
+            </div>
+
+            <div class="container-finish">
+              <button class="btn-save">Salvar o Registro</button>
+              <button class="btn-cancel">Cancelar Registro</button>
+            </div>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer-info">
+      <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
+    </footer>
+  </body>
+</html>

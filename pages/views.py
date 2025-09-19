@@ -1,12 +1,14 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.db.models import Q
+from django.contrib import messages
 from contratos.models import Contrato, Vigencia, Links, Garantia, Gestor, Contato, EmailContato, TelefoneContato
 from datetime import timedelta
 from .forms import ContratoForm, VigenciaForm, LinksForm, GarantiaForm, GestorForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+import json
 
 def home(request):
     numero = request.GET.get('numero', '')
@@ -157,49 +159,112 @@ def saveContact(request):
 def profile(request):
     return render(request, "pages/profile.html")
 
-
 def updateContracts(request):
-    search = request.GET.get('search', '')
+    if request.method == "POST":
+        contrato_id = request.POST.get("contrato_id")
+        responsaveis_json = request.POST.get("responsaveis_json")
 
-    contratos_list = Contrato.objects.all().order_by('numero_contrato')
+        if not contrato_id:
+            messages.error(request, "Erro: Nenhum contrato foi selecionado para atualização.")
+            return redirect("update_contracts")
+
+        contrato_obj = get_object_or_404(Contrato, pk=contrato_id)
+        
+        # Pega as instâncias relacionadas ou None se não existirem
+        vigencia_obj = getattr(contrato_obj, "vigencia", None)
+        links_obj = getattr(contrato_obj, "links", None)
+        garantia_obj = getattr(contrato_obj, "garantia", None)
+        gestor_obj = getattr(contrato_obj, "gestor", None)
+
+        contrato_form = ContratoForm(request.POST, instance=contrato_obj)
+        vigencia_form = VigenciaForm(request.POST, instance=vigencia_obj)
+        links_form = LinksForm(request.POST, instance=links_obj)
+        garantia_form = GarantiaForm(request.POST, instance=garantia_obj)
+        gestor_form = GestorForm(request.POST, instance=gestor_obj)
+
+        forms_sao_validos = all([
+            contrato_form.is_valid(), 
+            vigencia_form.is_valid(), 
+            links_form.is_valid(), 
+            garantia_form.is_valid(), 
+            gestor_form.is_valid()
+        ])
+
+        if forms_sao_validos:
+            contrato_form.save()
+
+            # --- Lógica de salvamento alterada para usar commit=False ---
+
+            # Salva Vigencia
+            vigencia = vigencia_form.save(commit=False)
+            vigencia.contrato = contrato_obj
+            vigencia.save()
+
+            # Salva Links
+            links = links_form.save(commit=False)
+            links.contrato = contrato_obj
+            links.save()
+
+            # Salva Garantia
+            garantia = garantia_form.save(commit=False)
+            garantia.contrato = contrato_obj
+            garantia.save()
+
+            # Salva Gestor
+            gestor = gestor_form.save(commit=False)
+            gestor.contrato = contrato_obj
+            gestor.save()
+
+            # --- Lógica para salvar os "Responsáveis" (Contatos) ---
+            try:
+                responsaveis_data = json.loads(responsaveis_json)
+                contrato_obj.contato_set.all().delete()
+
+                for resp_data in responsaveis_data:
+                    novo_contato = Contato.objects.create(
+                        contrato=contrato_obj,
+                        nome=resp_data.get("nome", "Sem nome")
+                    )
+                    for email_str in resp_data.get("emails", []):
+                        if email_str:
+                            EmailContato.objects.create(contato=novo_contato, email=email_str)
+                    for tel_str in resp_data.get("telefones", []):
+                        if tel_str:
+                            TelefoneContato.objects.create(contato=novo_contato, telefone=tel_str)
+            except (json.JSONDecodeError, TypeError):
+                messages.warning(request, "Dados dos responsáveis não puderam ser processados.")
+
+            messages.success(request, f"Contrato \"{contrato_obj.numero_contrato}\" atualizado com sucesso!")
+        else:
+            messages.error(request, "Não foi possível salvar. Verifique os dados do contrato.")
+            # Bloco de debug (opcional, mas útil)
+            print("\n--- INÍCIO DOS ERROS DE VALIDAÇÃO ---")
+            if not contrato_form.is_valid(): print("Erros no ContratoForm:", contrato_form.errors.as_json())
+            if not vigencia_form.is_valid(): print("Erros no VigenciaForm:", vigencia_form.errors.as_json())
+            if not links_form.is_valid(): print("Erros no LinksForm:", links_form.errors.as_json())
+            if not garantia_form.is_valid(): print("Erros no GarantiaForm:", garantia_form.errors.as_json())
+            if not gestor_form.is_valid(): print("Erros no GestorForm:", gestor_form.errors.as_json())
+            print("--- FIM DOS ERROS DE VALIDAÇÃO ---\n")
+
+        return redirect("update_contracts")
+
+    # --- LÓGICA GET (sem alterações) ---
+    search = request.GET.get("search", "")
+    contratos_list = Contrato.objects.all().order_by("numero_contrato")
     if search:
         contratos_list = contratos_list.filter(
             Q(entidade__icontains=search) |
             Q(cnpj_cpf__icontains=search) |
             Q(numero_contrato__icontains=search)
         )
-
     paginator = Paginator(contratos_list, 5)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-
     context = {
-        'page_obj': page_obj,
-        'search': search,
+        "page_obj": page_obj,
+        "search": search,
     }
     return render(request, "pages/updateContracts.html", context)
 
-def profile(request):
-    return render(request, "pages/profile.html")
-
-
-def updateContracts(request):
-    search = request.GET.get('search', '')
-
-    contratos_list = Contrato.objects.all().order_by('numero_contrato')
-    if search:
-        contratos_list = contratos_list.filter(
-            Q(entidade__icontains=search) |
-            Q(cnpj_cpf__icontains=search) |
-            Q(numero_contrato__icontains=search)
-        )
-
-    paginator = Paginator(contratos_list, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'page_obj': page_obj,
-        'search': search,
-    }
-    return render(request, "pages/updateContracts.html", context)
+def contract(request):
+    return render(request, 'pages/contract.html')
