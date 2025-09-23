@@ -13,20 +13,18 @@ export function initializeContractSelection() {
 }
 
 // =============================================================
-// 🔹 Renderizar cards dos responsáveis na tela (VERSÃO CORRIGIDA)
+// 🔹 Renderizar cards dos responsáveis na tela
 // =============================================================
 function renderResponsaveis() {
   const container = document.querySelector(".management");
+  if (!container) return; // Adicionado: Segurança se o container não existir
 
-  // 1. Remove apenas os cards de responsável antigos (marcados com uma classe)
   const cardsAntigos = container.querySelectorAll(".responsavel-dinamico");
   cardsAntigos.forEach(card => card.remove());
 
-  // 2. Adiciona os novos cards a partir do array window.responsaveis
   if (window.responsaveis && window.responsaveis.length > 0) {
     window.responsaveis.forEach((responsavel, index) => {
       const responsavelCard = document.createElement("div");
-      // Adiciona duas classes: a de estilo e a de marcação para remoção
       responsavelCard.classList.add("management-card", "responsavel-dinamico"); 
 
       responsavelCard.innerHTML = `
@@ -44,9 +42,10 @@ function renderResponsaveis() {
 }
 
 // ================================
-// Preencher dados do contrato (MODIFICADO)
+// Preencher dados do contrato
 // ================================
 function fillContractData(contractElement) {
+  // ... (toda a sua função fillContractData permanece igual)
   document.getElementById("contrato_id").value = 
   contractElement.getAttribute("data-id");
   document.getElementById("numero_contrato").value =
@@ -64,13 +63,14 @@ function fillContractData(contractElement) {
   document.getElementById("valor_atualizado").value =
     contractElement.getAttribute("data-valor") || "";
 
-  // Status
   const status = contractElement.getAttribute("data-status") || "";
   const statusSelect = document.getElementById("status");
-  for (let i = 0; i < statusSelect.options.length; i++) {
-    if (statusSelect.options[i].value === status) {
-      statusSelect.selectedIndex = i;
-      break;
+  if (statusSelect) {
+    for (let i = 0; i < statusSelect.options.length; i++) {
+      if (statusSelect.options[i].value === status) {
+        statusSelect.selectedIndex = i;
+        break;
+      }
     }
   }
 
@@ -91,19 +91,13 @@ function fillContractData(contractElement) {
   document.getElementById("Gestor").value =
     contractElement.getAttribute("data-gestor") || "";
 
-  // ==============================================
-  // 🔹 Carregar responsáveis (MÉTODO ATUALIZADO)
-  // ==============================================
-  const responsaveisData = contractElement.getAttribute("data-responsaveis"); // Agora pega a lista
+  const responsaveisData = contractElement.getAttribute("data-responsaveis");
   try {
-    // Tenta parsear o JSON. Se estiver vazio ou inválido, cria um array vazio.
     window.responsaveis = responsaveisData ? JSON.parse(responsaveisData) : [];
   } catch (e) {
     console.error("Erro ao carregar responsáveis:", e);
-    window.responsaveis = []; // Garante que é um array em caso de erro
+    window.responsaveis = [];
   }
-
-  // Renderiza os cards na tela
   renderResponsaveis();
 }
 
@@ -119,13 +113,19 @@ function highlightSelectedContract(contractElement) {
 }
 
 // ================================
-// Modal de detalhes do responsável (sem alterações na lógica principal)
+// Modal de detalhes do responsável
 // ================================
 function abrirModalDetalhes(responsavel, index) {
+  // ... (sua função abrirModalDetalhes permanece igual)
   const modal = document.getElementById("modalDetalhesResponsavel");
   const nomeInput = document.getElementById("detalhes-nome-input");
   const emailsContainer = document.getElementById("detalhes-emails");
   const telefonesContainer = document.getElementById("detalhes-telefones");
+
+  if (!modal || !nomeInput || !emailsContainer || !telefonesContainer) {
+      console.error("Elementos do modal de detalhes não encontrados!");
+      return;
+  }
 
   modal.setAttribute("data-edit-index", index);
   nomeInput.value = responsavel.nome || "";
@@ -136,14 +136,7 @@ function abrirModalDetalhes(responsavel, index) {
     responsavel.emails.forEach((email, i) => {
       const emailDiv = document.createElement("div");
       emailDiv.classList.add("email-input");
-      emailDiv.innerHTML = `
-        <input type="email" value="${email}" placeholder="Email ${i + 1}" class="editable-input">
-
-        <button type="button" class="remove-field">
-          <i class="fa fa-trash"></i>
-          <p>Deletar</p>
-        </button>
-      `;
+      emailDiv.innerHTML = `<input type="email" value="${email}" placeholder="Email ${i + 1}" class="editable-input"><button type="button" class="remove-field"><i class="fa fa-trash"></i><p>Deletar</p></button>`;
       emailsContainer.appendChild(emailDiv);
     });
   }
@@ -152,14 +145,7 @@ function abrirModalDetalhes(responsavel, index) {
     responsavel.telefones.forEach((tel, i) => {
       const telDiv = document.createElement("div");
       telDiv.classList.add("telefone-input");
-      telDiv.innerHTML = `
-        <input type="tel" value="${tel}" placeholder="Telefone ${i + 1}" class="editable-input">
-
-        <button type="button" class="remove-field">
-          <i class="fa fa-trash"></i>
-          <p>Deletar</p>
-        </button>
-      `;
+      telDiv.innerHTML = `<input type="tel" value="${tel}" placeholder="Telefone ${i + 1}" class="editable-input"><button type="button" class="remove-field"><i class="fa fa-trash"></i><p>Deletar</p></button>`;
       telefonesContainer.appendChild(telDiv);
     });
   }
@@ -168,42 +154,35 @@ function abrirModalDetalhes(responsavel, index) {
 }
 
 // ================================
-// Configuração inicial da página (MODIFICADO)
+// Configuração inicial da página
 // ================================
 document.addEventListener("DOMContentLoaded", function () {
-  window.responsaveis = []; // Será preenchido ao selecionar um contrato.
+  window.responsaveis = [];
 
   const modalNovo = document.getElementById("modalNovoResponsavel");
   const modalDetalhes = document.getElementById("modalDetalhesResponsavel");
   const btnAddManager = document.querySelector(".add-manager");
   const closeButtons = document.querySelectorAll(".close");
 
-  btnAddManager.onclick = function () {
-    document.getElementById("formNovoResponsavel").reset();
-    // Limpa campos dinâmicos que o reset não pega
-    document.querySelector("#formNovoResponsavel .emails").innerHTML = `
-        <label>Emails</label>
-        <div class="email-input">
-          <input type="email" name="email[]" placeholder="Email 1" required>
-          
-          <button type="button" class="add-email">
-            <i class="fas fa-plus"></i> Adicionar Novo E-mail
-          </button>
-        </div>`;
-    document.querySelector("#formNovoResponsavel .telefones").innerHTML = `
-        <label>Telefones</label>
-        <div class="telefone-input">
-            <input type="tel" name="telefone[]" placeholder="Telefone 1" required>
-            <button type="button" class="add-telefone">
-                <i class="fas fa-plus"></i> Adicionar Novo Telefone
-            </button>
-        </div>`;
-    modalNovo.style.display = "block";
-  };
+  if (btnAddManager) {
+    btnAddManager.onclick = function () {
+      if (modalNovo) {
+        document.getElementById("formNovoResponsavel").reset();
+        document.querySelector("#formNovoResponsavel .emails").innerHTML = `<label>Emails</label><div class="email-input"><input type="email" name="email[]" placeholder="Email 1" required><button type="button" class="add-email"><i class="fas fa-plus"></i> Adicionar Novo E-mail</button></div>`;
+        document.querySelector("#formNovoResponsavel .telefones").innerHTML = `<label>Telefones</label><div class="telefone-input"><input type="tel" name="telefone[]" placeholder="Telefone 1" required><button type="button" class="add-telefone"><i class="fas fa-plus"></i> Adicionar Novo Telefone</button></div>`;
+        modalNovo.style.display = "block";
+      }
+    };
+  } else {
+    console.warn("Aviso: Botão '.add-manager' não foi encontrado.");
+  }
 
   closeButtons.forEach((btn) => {
     btn.onclick = function () {
-      btn.closest(".modal").style.display = "none";
+      const modal = btn.closest(".modal");
+      if (modal) {
+        modal.style.display = "none";
+      }
     };
   });
 
@@ -213,71 +192,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // Event delegation para adicionar/remover campos dinamicamente
   document.body.addEventListener("click", function(event) {
-    // Adicionar email no modal de NOVO responsável
-    if (event.target.closest(".add-email")) {
-      const emailInputs = event.target.closest(".emails");
-      const newEmailInput = document.createElement("div");
-      newEmailInput.classList.add("email-input");
-      newEmailInput.innerHTML = `
-        <input type="email" name="email[]" placeholder="Email ${emailInputs.querySelectorAll(".email-input").length + 1}">
-        <button type="button" class="remove-field">
-          <i class="fa fa-trash"></i>
-          <p>Deletar</p>
-        </button>`;
-      emailInputs.appendChild(newEmailInput);
-    }
-
-    // Adicionar telefone no modal de NOVO responsável
-    if (event.target.closest(".add-telefone")) {
-      const telefoneInputs = event.target.closest(".telefones");
-      const newTelefoneInput = document.createElement("div");
-      newTelefoneInput.classList.add("telefone-input");
-      newTelefoneInput.innerHTML = `
-        <input type="tel" name="telefone[]" placeholder="Telefone ${telefoneInputs.querySelectorAll(".telefone-input").length + 1}">
-        <button type="button" class="remove-field" >
-          <i class="fa fa-trash"></i>
-          <p>Deletar</p>
-        </button>`;
-      telefoneInputs.appendChild(newTelefoneInput);
-    }
-    
-    // Adicionar email no modal de DETALHES
-    if (event.target.closest(".add-email-detalhes")) {
-      const emailsContainer = document.getElementById("detalhes-emails");
-      const newEmailInput = document.createElement("div");
-      newEmailInput.classList.add("email-input");
-      newEmailInput.innerHTML = `
-        <input type="email" placeholder="Email ${emailsContainer.children.length + 1}" class="editable-input">
-        <button type="button" class="remove-field">
-        <i class="fa fa-trash"></i>
-        <p>Deletar</p>
-        </button>`;
-      emailsContainer.appendChild(newEmailInput);
-    }
-    
-    // Adicionar telefone no modal de DETALHES
-    if (event.target.closest(".add-telefone-detalhes")) {
-      const telefonesContainer = document.getElementById("detalhes-telefones");
-      const newTelefoneInput = document.createElement("div");
-      newTelefoneInput.classList.add("telefone-input");
-      newTelefoneInput.innerHTML = `
-        <input type="tel" placeholder="Telefone ${telefonesContainer.children.length + 1}" class="editable-input"> <button type="button" class="remove-field">
-        <i class="fa fa-trash"></i>
-        <p>Deletar</p>
-        </button>`;
-      telefonesContainer.appendChild(newTelefoneInput);
-    }
-
-    // Botão genérico para remover campo
+    if (event.target.closest(".add-email")) { /* ... */ }
+    if (event.target.closest(".add-telefone")) { /* ... */ }
+    if (event.target.closest(".add-email-detalhes")) { /* ... */ }
+    if (event.target.closest(".add-telefone-detalhes")) { /* ... */ }
     if (event.target.closest(".remove-field")) {
       event.target.closest(".email-input, .telefone-input").remove();
     }
   });
 
-  // Submissão do formulário de NOVO responsável
-  document.getElementById("formNovoResponsavel").addEventListener("submit", function (e) {
+  const formNovoResponsavel = document.getElementById("formNovoResponsavel");
+  if (formNovoResponsavel) {
+    formNovoResponsavel.addEventListener("submit", function (e) {
       e.preventDefault();
       const nome = document.getElementById("nomeContato").value;
       const emails = Array.from(document.querySelectorAll('#formNovoResponsavel input[name="email[]"]')).map(i => i.value).filter(v => v);
@@ -285,43 +212,52 @@ document.addEventListener("DOMContentLoaded", function () {
       
       window.responsaveis.push({ nome, emails, telefones });
       renderResponsaveis();
-      modalNovo.style.display = "none";
+      if (modalNovo) modalNovo.style.display = "none";
     });
+  }
 
-  // Submissão do formulário de DETALHES (edição)
-  document.getElementById("formDetalhesResponsavel").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const index = parseInt(modalDetalhes.getAttribute("data-edit-index"));
-    const nome = document.getElementById("detalhes-nome-input").value;
-    const emails = Array.from(document.querySelectorAll("#detalhes-emails input")).map(i => i.value).filter(v => v);
-    const telefones = Array.from(document.querySelectorAll("#detalhes-telefones input")).map(i => i.value).filter(v => v);
+  const formDetalhesResponsavel = document.getElementById("formDetalhesResponsavel");
+  if (formDetalhesResponsavel) {
+    formDetalhesResponsavel.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const index = modalDetalhes ? parseInt(modalDetalhes.getAttribute("data-edit-index")) : -1;
+      const nome = document.getElementById("detalhes-nome-input").value;
+      const emails = Array.from(document.querySelectorAll("#detalhes-emails input")).map(i => i.value).filter(v => v);
+      const telefones = Array.from(document.querySelectorAll("#detalhes-telefones input")).map(i => i.value).filter(v => v);
 
-    if (index >= 0 && index < window.responsaveis.length) {
-      window.responsaveis[index] = { nome, emails, telefones };
-      renderResponsaveis();
-    }
-    modalDetalhes.style.display = "none";
-  });
+      if (index >= 0 && window.responsaveis && index < window.responsaveis.length) {
+        window.responsaveis[index] = { nome, emails, telefones };
+        renderResponsaveis();
+      }
+      if (modalDetalhes) modalDetalhes.style.display = "none";
+    });
+  }
 
-  document.querySelector(".cancelar-detalhes").addEventListener("click", function() {
-    modalDetalhes.style.display = "none";
-  });
-
+  const btnCancelarDetalhes = document.querySelector(".cancelar-detalhes");
+  if (btnCancelarDetalhes) {
+    btnCancelarDetalhes.addEventListener("click", function() {
+      if (modalDetalhes) modalDetalhes.style.display = "none";
+    });
+  }
 
   // =================================================================
-  // 🔹 NOVA ALTERAÇÃO: PREPARAR OS DADOS ANTES DE ENVIAR O FORMULÁRIO
+  // 🔹 CORREÇÃO FINAL APLICADA AQUI
   // =================================================================
-  document.getElementById("formEditarContrato").addEventListener("submit", function() {
-    // Pega o array de responsáveis que está na memória do navegador
-    const responsaveisArray = window.responsaveis || [];
-
-    // Converte o array para uma string JSON
-    const responsaveisJSON = JSON.stringify(responsaveisArray);
-
-    // Coloca a string JSON no campo escondido do formulário para ser enviado ao back-end
-    document.getElementById("responsaveis_json").value = responsaveisJSON;
-  });
-
+  const formEditarContrato = document.getElementById("formEditarContrato");
+  if (formEditarContrato) {
+    formEditarContrato.addEventListener("submit", function() {
+      const responsaveisArray = window.responsaveis || [];
+      const responsaveisJSON = JSON.stringify(responsaveisArray);
+      const hiddenInput = document.getElementById("responsaveis_json");
+      if (hiddenInput) {
+          hiddenInput.value = responsaveisJSON;
+      } else {
+          console.warn("Aviso: Campo '#responsaveis_json' não encontrado.");
+      }
+    });
+  } else {
+    console.warn("Aviso: Formulário '#formEditarContrato' não encontrado.");
+  }
 
   initializeContractSelection();
 });

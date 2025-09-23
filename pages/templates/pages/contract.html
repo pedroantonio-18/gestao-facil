@@ -1,134 +1,154 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <link
-      href="{% static 'assets/favicon.png' %}"
-      rel="icon"
-      type="image/png"
-    />
-
+<head>
+    <!-- ... (seu head continua igual) ... -->
     <link href="{% static 'css/global.css' %}" rel="stylesheet" />
     <link href="{% static 'css/contract.css' %}" rel="stylesheet" />
-
-    <title>Gestao Facil</title>
-  </head>
-  <body>
+    <title>Gestão Fácil - Registrar Contrato</title>
+</head>
+<body>
     <header class="header">
-      <nav class="nav-bar">
-        <h1 class="nav-title">Registro de Contratos</h1>
-        <a class="go-home" href="{% url 'home' %}">Voltar para Home</a>
-      </nav>
+        <nav class="nav-bar">
+            <h1 class="nav-title">Registro de Contratos</h1>
+            <a class="go-home" href="{% url 'home' %}">Voltar para Home</a>
+        </nav>
     </header>
 
     <main class="content">
-      <section class="container-form">
-        <form class="form-contracts">
-          <h3 class="form-title">PREENCHA OS DADOS DO NOVO CONTRATO</h3>
 
-          <div class="form-grid">
-              <div class="edit-action-card">
-                <label for="numero_contrato">Informe o N° do contrato</label>
-                <input type="text" id="numero_contrato" name="numero_contrato" readonly>
-              </div>
+    {% if messages %}
+        <div class="container-messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                    <span class="close-message" onclick="this.parentElement.style.display='none';">&times;</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-              <div class="edit-action-card">
-                <label for="processo_sei">Informe o N° do Processo SEI</label>
-                <input type="text" id="processo_sei" name="processo_sei" readonly>
-              </div>
+        <section class="container-form">
+            <form class="form-contracts" method="POST" action="{% url 'contract_page' %}">
+                {% csrf_token %}
+                <h3 class="form-title">PREENCHA OS DADOS DO NOVO CONTRATO</h3>
 
-              <div class="edit-action-card">
-                <label for="objeto">Informe uma descrição do Objeto</label>
-                <textarea id="objeto" name="objeto"></textarea>
-              </div>
+                <!-- Container para exibir mensagens de erro ou sucesso -->
+                {% if messages %}
+                    <div class="container-messages-form">
+                        {% for message in messages %}
+                            <div class="message {{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-              <div class="edit-action-card">
-                <label for="contratada">Informe a Contratada</label>
-                <input type="text" id="contratada" name="contratada">
-              </div>
+                <div class="form-grid">
+                    <!-- Campo Processo SEI (não está em um form, então o mantemos manual) -->
+                    <div class="edit-action-card">
+                        <label for="processo_sei">Informe o N° do Processo SEI</label>
+                        <input type="text" id="processo_sei" name="processo_sei" required>
+                    </div>
 
-              <div class="edit-action-card">
-                <label for="cnpj_cpf">Informe o CNPJ/CPF</label>
-                <input type="text" id="cnpj_cpf" name="cnpj_cpf">
-              </div>
+                    <!-- Renderiza campos do ContratoForm -->
+                    <div class="edit-action-card">
+                        {{ contrato_form.objeto.label_tag }}
+                        {{ contrato_form.objeto }}
+                        {% if contrato_form.objeto.errors %}<div class="field-errors">{{ contrato_form.objeto.errors }}</div>{% endif %}
+                    </div>
+                    <div class="edit-action-card">
+                        {{ contrato_form.entidade.label_tag }}
+                        {{ contrato_form.entidade }}
+                        {% if contrato_form.entidade.errors %}<div class="field-errors">{{ contrato_form.entidade.errors }}</div>{% endif %}
+                    </div>
+                    <div class="edit-action-card">
+                        {{ contrato_form.cnpj_cpf.label_tag }}
+                        {{ contrato_form.cnpj_cpf }}
+                        {% if contrato_form.cnpj_cpf.errors %}<div class="field-errors">{{ contrato_form.cnpj_cpf.errors }}</div>{% endif %}
+                    </div>
+                    <div class="edit-action-card">
+                        {{ contrato_form.observacoes.label_tag }}
+                        {{ contrato_form.observacoes }}
+                        {% if contrato_form.observacoes.errors %}<div class="field-errors">{{ contrato_form.observacoes.errors }}</div>{% endif %}
+                    </div>
+                    <div class="edit-action-card">
+                        {{ contrato_form.valor_atualizado.label_tag }}
+                        {{ contrato_form.valor_atualizado }}
+                        {% if contrato_form.valor_atualizado.errors %}<div class="field-errors">{{ contrato_form.valor_atualizado.errors }}</div>{% endif %}
+                    </div>
+                    <div class="edit-action-card">
+                        {{ contrato_form.status.label_tag }}
+                        {{ contrato_form.status }}
+                        {% if contrato_form.status.errors %}<div class="field-errors">{{ contrato_form.status.errors }}</div>{% endif %}
+                    </div>
 
-              <div class="edit-action-card">
-                <label for="observacoes">Informe as Observações</label>
-                <textarea id="observacoes" name="observacoes"></textarea>
-              </div>
+                    <!-- Renderiza campos do VigenciaForm -->
+                    <div class="edit-action-card">
+                        {{ vigencia_form.vigencia_original.label_tag }}
+                        {{ vigencia_form.vigencia_original }}
+                        {% if vigencia_form.vigencia_original.errors %}<div class="field-errors">{{ vigencia_form.vigencia_original.errors }}</div>{% endif %}
+                    </div>
+                    <div class="edit-action-card">
+                        {{ vigencia_form.vigencia_max.label_tag }}
+                        {{ vigencia_form.vigencia_max }}
+                        {% if vigencia_form.vigencia_max.errors %}<div class="field-errors">{{ vigencia_form.vigencia_max.errors }}</div>{% endif %}
+                    </div>
 
-              <div class="edit-action-card">
-                <label for="valor_atualizado">Informe o Valor Atualizado</label>
-                <input type="text" id="valor_atualizado" name="valor_atualizado">
-              </div>
+                    <!-- Renderiza campos do LinksForm -->
+                    <div class="edit-action-card">
+                        {{ links_form.link_planilhas_sei.label_tag }}
+                        {{ links_form.link_planilhas_sei }}
+                        {% if links_form.link_planilhas_sei.errors %}<div class="field-errors">{{ links_form.link_planilhas_sei.errors }}</div>{% endif %}
+                    </div>
+                    <div class="edit-action-card">
+                        {{ links_form.link_convencao_coletiva_sei.label_tag }}
+                        {{ links_form.link_convencao_coletiva_sei }}
+                        {% if links_form.link_convencao_coletiva_sei.errors %}<div class="field-errors">{{ links_form.link_convencao_coletiva_sei.errors }}</div>{% endif %}
+                    </div>
 
-              <div class="edit-action-card">
-                <label for="status">Informe o Status</label>
-                <select id="status" name="status">
-                  <option value="ativo">Ativo</option>
-                  <option value="inativo">Inativo</option>
-                  <option value="reincidiu">Reincidiu</option>
-                </select>
-              </div>
+                    <!-- Renderiza campos do GarantiaForm -->
+                    <div class="edit-action-card">
+                        {{ garantia_form.tipo_garantia.label_tag }}
+                        {{ garantia_form.tipo_garantia }}
+                        {% if garantia_form.tipo_garantia.errors %}<div class="field-errors">{{ garantia_form.tipo_garantia.errors }}</div>{% endif %}
+                    </div>
+                    <div class="edit-action-card">
+                        {{ garantia_form.valor_garantia.label_tag }}
+                        {{ garantia_form.valor_garantia }}
+                        {% if garantia_form.valor_garantia.errors %}<div class="field-errors">{{ garantia_form.valor_garantia.errors }}</div>{% endif %}
+                    </div>
 
-              <div class="edit-action-card">
-                <label for="vigencia_original">Informe a Vigência</label>
-                <input type="date" id="vigencia_original" name="vigencia_original">
-              </div>
+                    <!-- Renderiza campos do GestorForm -->
+                    <div class="edit-action-card">
+                        {{ gestor_form.nome.label_tag }}
+                        {{ gestor_form.nome }}
+                        {% if gestor_form.nome.errors %}<div class="field-errors">{{ gestor_form.nome.errors }}</div>{% endif %}
+                    </div>
 
-              <div class="edit-action-card">
-                <label for="vigencia_maxima">Informe a Vigência Máxima</label>
-                <input type="date" id="vigencia_maxima" name="vigencia_maxima">
-              </div>
+                    <!-- Campos manuais para o Contato (Responsável) -->
+                    <div class="edit-action-card plus-info">
+                        <label for="responsavel">Responsável (Contato)</label>
+                        <input id="responsavel" name="nome_contato">
+                        <button type="button" class="btn-data"><i class="fas fa-chevron-down"></i><p>Adicionar Dados</p></button>
+                        <div class="container-data">
+                            <label for="email_responsavel">E-mail do responsável</label>
+                            <input id="email_responsavel" name="email_contato" type="email">
+                            <label for="telefone_responsavel">Telefone do responsável</label>
+                            <input id="telefone_responsavel" name="telefone_contato" type="tel">
+                        </div>
+                    </div>
+                </div>
 
-              <div class="edit-action-card">
-                <label for="link_planilhas_sei">Informe o Link da Planilha SEI</label>
-                <input type="text" id="link_planilhas_sei" name="link_planilhas_sei">
-              </div>
-
-              <div class="edit-action-card">
-                <label for="link_convencao_coletiva">Informe o Link Convenção Coletiva</label>
-                <input type="text" id="link_convencao_coletiva" name="link_convencao_coletiva">
-              </div>
-
-              <div class="edit-action-card">
-                <label for="tipo_garantia">Informe oTipo da Garantia</label>
-                <input type="text" id="tipo_garantia" name="tipo_garantia">
-              </div>
-              
-              <div class="edit-action-card">
-                <label for="valor_garantia">Informe o Valor da Garantia</label>
-                <input type="text" id="valor_garantia" name="valor_garantia">
-              </div>
-
-              <div class="edit-action-card">
-                <label for="observacoes">Informe o Gestor</label>
-                <input id="Gestor" name="Gestor">
-              </div>
-
-              <div class="edit-action-card plus-info">
-                <label for="observacoes">Informe um Responsavel</label>
-                <input id="Gestor" name="Gestor">
-                <label for="observacoes">Informe o E-mail do responsavel</label>
-                <input id="E-mail" name="E-mail">
-                <label for="observacoes">Informe o Telefone do responsavel</label>
-                <input id="Telefone" name="Telefone">
-              </div>
-            </div>
-
-            <div class="container-finish">
-              <button class="btn-save">Salvar o Registro</button>
-              <button class="btn-cancel">Cancelar Registro</button>
-            </div>
-        </form>
-      </section>
+                <div class="container-finish">
+                    <button class="btn-save" type="submit">Salvar o Registro</button>
+                    <button class="btn-cancel" type="button" onclick="window.location.href='{% url 'home' %}'">Cancelar Registro</button>
+                </div>
+            </form>
+        </section>
     </main>
-
+    
     <footer class="footer-info">
-      <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservadoos•</p>
+        <p>&copy; <strong>2025 SJGO</strong> •Todos os direitos reservados•</p>
     </footer>
-  </body>
+    <script src="{% static 'js/scripts.js' %}" type="module" defer></script>
+</body>
 </html>

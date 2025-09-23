@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 
-def home(request):
+def home(request ):
     numero = request.GET.get('numero', '')
     entidade = request.GET.get('entidade', '')
     documento = request.GET.get('documento', '')
@@ -117,7 +117,7 @@ def saveContact(request):
         return JsonResponse({'success': False, 'error': 'Método inválido'})
     
     print("=== DADOS RECEBIDOS ===")
-    print("POST:", request.POST.dict())       # transforma em dict normal
+    print("POST:", request.POST.dict())
     print("LISTA DE EMAILS:", request.POST.getlist('emails[]'))
     print("LISTA DE TELEFONES:", request.POST.getlist('telefones[]'))
     print("=======================")
@@ -170,7 +170,6 @@ def updateContracts(request):
 
         contrato_obj = get_object_or_404(Contrato, pk=contrato_id)
         
-        # Pega as instâncias relacionadas ou None se não existirem
         vigencia_obj = getattr(contrato_obj, "vigencia", None)
         links_obj = getattr(contrato_obj, "links", None)
         garantia_obj = getattr(contrato_obj, "garantia", None)
@@ -192,34 +191,22 @@ def updateContracts(request):
 
         if forms_sao_validos:
             contrato_form.save()
-
-            # --- Lógica de salvamento alterada para usar commit=False ---
-
-            # Salva Vigencia
             vigencia = vigencia_form.save(commit=False)
             vigencia.contrato = contrato_obj
             vigencia.save()
-
-            # Salva Links
             links = links_form.save(commit=False)
             links.contrato = contrato_obj
             links.save()
-
-            # Salva Garantia
             garantia = garantia_form.save(commit=False)
             garantia.contrato = contrato_obj
             garantia.save()
-
-            # Salva Gestor
             gestor = gestor_form.save(commit=False)
             gestor.contrato = contrato_obj
             gestor.save()
 
-            # --- Lógica para salvar os "Responsáveis" (Contatos) ---
             try:
                 responsaveis_data = json.loads(responsaveis_json)
                 contrato_obj.contato_set.all().delete()
-
                 for resp_data in responsaveis_data:
                     novo_contato = Contato.objects.create(
                         contrato=contrato_obj,
@@ -237,7 +224,6 @@ def updateContracts(request):
             messages.success(request, f"Contrato \"{contrato_obj.numero_contrato}\" atualizado com sucesso!")
         else:
             messages.error(request, "Não foi possível salvar. Verifique os dados do contrato.")
-            # Bloco de debug (opcional, mas útil)
             print("\n--- INÍCIO DOS ERROS DE VALIDAÇÃO ---")
             if not contrato_form.is_valid(): print("Erros no ContratoForm:", contrato_form.errors.as_json())
             if not vigencia_form.is_valid(): print("Erros no VigenciaForm:", vigencia_form.errors.as_json())
@@ -248,7 +234,18 @@ def updateContracts(request):
 
         return redirect("update_contracts")
 
-    # --- LÓGICA GET (sem alterações) ---
+    # --- LÓGICA GET (COM A CORREÇÃO) ---
+    
+    # Bloco de código para buscar notificações (copiado da view 'home')
+    hoje = timezone.now().date()
+    limite_vencimento = hoje + timedelta(days=30)
+    contratos_vencidos = Contrato.objects.filter(vigencia__vigencia_atual__lt=hoje).distinct()
+    contratos_a_vencer = Contrato.objects.filter(
+        vigencia__vigencia_atual__gte=hoje,
+        vigencia__vigencia_atual__lte=limite_vencimento
+    ).distinct()
+
+    # Lógica de busca e paginação
     search = request.GET.get("search", "")
     contratos_list = Contrato.objects.all().order_by("numero_contrato")
     if search:
@@ -260,11 +257,104 @@ def updateContracts(request):
     paginator = Paginator(contratos_list, 5)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    
+    # Contexto atualizado para incluir os dados das notificações
     context = {
         "page_obj": page_obj,
         "search": search,
+        "contratos_vencidos": contratos_vencidos,
+        "contratos_a_vencer": contratos_a_vencer,
     }
     return render(request, "pages/updateContracts.html", context)
 
+
 def contract(request):
-    return render(request, 'pages/contract.html')
+    # Se a requisição for POST, processa os dados do formulário
+    if request.method == 'POST':
+        # Instancia cada formulário com os dados recebidos
+        contrato_form = ContratoForm(request.POST)
+        vigencia_form = VigenciaForm(request.POST)
+        links_form = LinksForm(request.POST)
+        garantia_form = GarantiaForm(request.POST)
+        gestor_form = GestorForm(request.POST)
+
+        # Coleta dados que não estão nos forms (contato)
+        nome_contato = request.POST.get('nome_contato')
+        email_contato = request.POST.get('email_contato')
+        telefone_contato = request.POST.get('telefone_contato')
+        
+        # Lista de todos os forms para validação
+        forms_a_validar = [contrato_form, vigencia_form, links_form, garantia_form, gestor_form]
+
+        # Verifica se TODOS os formulários são válidos
+        if all(form.is_valid() for form in forms_a_validar):
+            try:
+                # --- Lógica de salvamento em duas etapas ---
+                
+                # 1. Salva o Contrato principal, mas sem commit no banco ainda
+                novo_contrato = contrato_form.save(commit=False)
+                
+                # Gera e atribui o número do contrato e o processo SEI
+                novo_contrato.numero_contrato = Contrato().gerar_numero_contrato
+                novo_contrato.processo_sei = request.POST.get('processo_sei') # Pega o processo SEI
+                
+                # Agora salva o contrato principal no banco
+                novo_contrato.save()
+
+                # 2. Salva os outros objetos, associando-os ao contrato recém-criado
+                vigencia = vigencia_form.save(commit=False)
+                vigencia.contrato = novo_contrato
+                vigencia.vigencia_atual = vigencia.vigencia_original # Define vigencia_atual
+                vigencia.save()
+
+                links = links_form.save(commit=False)
+                links.contrato = novo_contrato
+                links.save()
+
+                garantia = garantia_form.save(commit=False)
+                garantia.contrato = novo_contrato
+                garantia.save()
+
+                gestor = gestor_form.save(commit=False)
+                gestor.contrato = novo_contrato
+                gestor.save()
+
+                # Salva o Contato (Responsável) se o nome foi fornecido
+                if nome_contato:
+                    contato_obj = Contato.objects.create(contrato=novo_contrato, nome=nome_contato)
+                    if email_contato:
+                        EmailContato.objects.create(contato=contato_obj, email=email_contato)
+                    if telefone_contato:
+                        TelefoneContato.objects.create(contato=contato_obj, telefone=telefone_contato)
+
+                # Adiciona a mensagem de sucesso para a confirmação visual
+                messages.success(request, f'Contrato "{novo_contrato.numero_contrato}" foi registrado com sucesso!')
+                return redirect('home')
+
+            except Exception as e:
+                messages.error(request, f'Ocorreu um erro inesperado ao salvar: {e}')
+        
+        else:
+            # Se algum formulário for inválido
+            messages.error(request, 'Não foi possível salvar. Por favor, corrija os erros abaixo.')
+            # A view continuará para renderizar a página com os erros
+
+    # Se a requisição for GET, cria instâncias de formulários em branco
+    else:
+        contrato_form = ContratoForm()
+        vigencia_form = VigenciaForm()
+        links_form = LinksForm()
+        garantia_form = GarantiaForm()
+        gestor_form = GestorForm()
+
+    # Junta todos os formulários em um dicionário para enviar ao template
+    context = {
+        'contrato_form': contrato_form,
+        'vigencia_form': vigencia_form,
+        'links_form': links_form,
+        'garantia_form': garantia_form,
+        'gestor_form': gestor_form,
+    }
+    
+    return render(request, 'pages/contract.html', context)
+

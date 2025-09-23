@@ -50,6 +50,10 @@
     margin: 0px 0px 10px 5px;    
 }
 
+.container-messages{
+  
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -62,7 +66,7 @@
   flex-direction: column;
   gap: 6px;
   padding: 10px;
-  height: 86px;
+  height: 100px;
   background-color: aliceblue;
   border: 1px solid #00589b30;
   border-radius: 10px;
@@ -87,8 +91,32 @@
   font-family: "Roboto", sans-serif;
 }
 
+.container-data{
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+}
+
 .plus-info{
-  height: 210px;
+  height: 100px;
+}
+
+.btn-data{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  padding: 3px;
+  color: #f7f7f7;
+  background-color: #00579b;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: "Roboto", sans-serif;
+}
+
+.btn-data:hover{
+  background-color: #004a88;
 }
 
 .container-finish{

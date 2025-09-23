@@ -18,7 +18,7 @@
   text-align: center;
 }
 
-.upload-label {
+.register {
   display: flex;
   align-items: center;
   font-family: "Roboto", sans-serif;
@@ -31,80 +31,7 @@
   transition: background-color 0.3s;
 }
 
-.modal-container {
-  position: fixed;
-  top: 10px;
-  left: 950px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  padding: 20px;
-  width: 500px;
-  max-height: 70vh;
-  display: none;
-  flex-direction: column;
-  font-family: "Roboto", sans-serif;
-  font-size: 15px;
-}
-
-.modal-container strong {
-  margin: 20px 0px;
-}
-
-.modal-itens {
-  flex: 1;             
-  overflow-y: auto;     
-  max-height: 50vh;     
-  margin-bottom: 15px;  
-}
-
-.modal-itens {
-  max-height: 50vh;
-  overflow-y: auto;
-  margin-top: 10px;
-  padding-right: 10px;
-}
-
-.modal-itens ul.notifications {
-  max-height: 300px;
-  overflow-y: auto;
-  margin: 5px 0 15px 0;
-  padding-right: 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-
-.notifications li {
-  margin-bottom: 10px;
-}
-
-.notifications {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: "Roboto", sans-serif;
-  color: #262626;
-  font-size: 15px;
-}
-
-.close-modal {
-  font-family: "Roboto", sans-serif;
-  cursor: pointer;
-  border: none;
-  background-color: #00579b;
-  color: aliceblue;
-  padding: 10px 30px;
-  border-radius: 10px;
-  font-size: 15px;
-}
-
-.close-modal:hover {
-  background-color: #004a88;
-}
-
-.upload-label:hover {
+.register:hover {
   background-color: #004a88;
   color: #f7f7f7;
 }
@@ -141,64 +68,76 @@ input[type="file"] {
 }
 
 .modal-container {
-  position: absolute;
+  position: fixed;
   top: 10px;
-  left: 950px;
+  left: 900px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  padding: 20px;
+  width: 600px;
+  height: 600px;
   display: none;
   flex-direction: column;
-  align-items: center;
-  background-color: aliceblue;
-  width: 300px;
-  height: 300px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #1b1b1b40;
   font-family: "Roboto", sans-serif;
-  color: #00579b;
+  font-size: 15px;
 }
 
-.modal-container h3 {
-  margin: 20px;
+.modal-container strong {
+  margin: 20px 0px;
 }
 
 .modal-itens {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #1b1b1b40;
+  flex: 1;
+  height: 100%;             
+  overflow-y: auto;     
+  margin-bottom: 15px;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding-right: 10px;
+}
+
+
+.modal-itens ul{
+
+  margin: 5px 0 15px 0;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
 .notifications {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: start;
+  align-items: start;
   font-family: "Roboto", sans-serif;
-  font-size: 15px;
   color: #262626;
-  margin: 25px;
+  font-size: 15px;
 }
 
 .notifications li {
-  margin-bottom: 25px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
-.notifications li:hover {
+.notifications li:hover{
   color: #00579b;
-  font-size: 25px;
 }
 
 .close-modal {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 30px;
-  font-size: 15px;
   font-family: "Roboto", sans-serif;
+  cursor: pointer;
+  border: none;
   background-color: #00579b;
   color: aliceblue;
-  cursor: pointer;
+  padding: 10px 30px;
+  border-radius: 10px;
+  font-size: 15px;
 }
 
 .close-modal:hover {
-  box-shadow: 0 0 3px #262626;
+  background-color: #004a88;
 }
 
 .utils {
